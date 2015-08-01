@@ -10,7 +10,7 @@ env.path = '/opt/%(prj_name)s' % env
 
 
 def local_box():
-    env.instance = 'local'
+    env.instance = 'local_box'
 
 
 def _ensure_virtualenv():
