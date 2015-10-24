@@ -1,21 +1,20 @@
+''' admin module for template app '''
 from django.contrib.gis import admin
 from template_app.models import CigarShop, FaveShops
 from django import forms
 from django.core import validators
 
 
-'''
-From http://stackoverflow.com/questions/17021852/latitude-longitude-widget-for-pointfield
-'''
 class LatLongWidget(forms.MultiWidget):
     """
-    A Widget that splits Point input into two latitude/longitude boxes.
+        A Widget that splits Point input into two latitude/longitude boxes.
+        From http://stackoverflow.com/questions/17021852/latitude-longitude-widget-for-pointfield
     """
 
     def __init__(self, attrs=None, date_format=None, time_format=None):
         widgets = (forms.TextInput(attrs=attrs),
                    forms.TextInput(attrs=attrs))
-        super(LatLongWidget, self).__init__(widgets, attrs)
+        super(LatLongWidget, self).__init__(widgets, attrs, date_format, time_format)
 
     def decompress(self, value):
         if value:
@@ -24,6 +23,7 @@ class LatLongWidget(forms.MultiWidget):
 
 
 class LatLongField(forms.MultiValueField):
+    ''' custom field that takes in a lat and long '''
     widget = LatLongWidget
     srid = 4326
 
@@ -33,11 +33,12 @@ class LatLongField(forms.MultiValueField):
     }
 
     def __init__(self, *args, **kwargs):
-        fields = (forms.FloatField(min_value=-90, max_value=90), 
+        fields = (forms.FloatField(min_value=-90, max_value=90),
                   forms.FloatField(min_value=-180, max_value=180))
         super(LatLongField, self).__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
+        ''' does magic to allow entering text field lat longs '''
         if data_list:
             # Raise a validation error if latitude or longitude is empty
             # (possible if LatLongField has required=False).
@@ -64,7 +65,7 @@ class CigarShopAdmin(admin.GeoModelAdmin):
 
 class MapCigarShop(CigarShop):
     ''' proxy cigar shop used in the admin model that shows a map. '''
-    class Meta():
+    class Meta(object):
         ''' meta info '''
         proxy = True
 

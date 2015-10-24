@@ -2,7 +2,6 @@
 from fabric.api import env, local, sudo, require, run, put, settings, cd, lcd
 import os
 import sys
-import time
 
 
 env.prj_name = 'django_template'
@@ -28,3 +27,17 @@ def copy_settings():
 def install_prod_deps():
     _ensure_virtualenv()
     local('pip install -q -r %(path)s/dependencies/prod.txt' % env)
+
+
+def install_all_deps():
+    _ensure_virtualenv()
+    install_prod_deps()
+    local('pip install -q -r %(path)s/dependencies/dev.txt' % env)
+
+
+def precommit():
+    _ensure_virtualenv()
+    install_all_deps()
+    local('mkdir -p reports')
+    local('pylint --rcfile=conf/pylintrc.txt template_app | tee reports/template_app_pylint.txt')
+    local('pylint --rcfile=conf/pylintrc.txt django_template | tee reports/django_template_pylint.txt')

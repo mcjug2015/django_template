@@ -1,5 +1,5 @@
+''' models module for template app '''
 from django.contrib.gis.db import models
-from django.db import models as classic_models
 from django.contrib.auth.models import User
 
 
@@ -9,7 +9,7 @@ class CigarShop(models.Model):
     name = models.CharField(max_length=250, null=False, blank=False)
     location = models.PointField()
     owner = models.ForeignKey(User, related_name='cigar_shops', null=False, blank=False)
-    
+
     def __str__(self):
         return self.name
 
@@ -20,6 +20,6 @@ class FaveShops(models.Model):
     name = models.CharField(max_length=250, null=False, blank=False)
     owner = models.ForeignKey(User, related_name='faves', null=False, blank=False)
     cigar_shops = models.ManyToManyField(CigarShop)
-    
+
     def __str__(self):
         return self.name

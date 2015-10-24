@@ -1,3 +1,4 @@
+# pylint: disable=C0103
 """the_template URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -19,12 +20,12 @@ from tastypie.api import Api
 from template_app.api import CigarShopResource, FaveShopsResource
 
 
-v1_api = Api(api_name='v1')
-v1_api.register(CigarShopResource())
-v1_api.register(FaveShopsResource())
+API_V1 = Api(api_name='v1')
+API_V1.register(CigarShopResource())
+API_V1.register(FaveShopsResource())
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include(v1_api.urls)),
+    url(r'^api/', include(API_V1.urls)),
 ]
