@@ -28,8 +28,8 @@ class LatLongField(forms.MultiValueField):
     srid = 4326
 
     default_error_messages = {
-        'invalid_latitude' : ('Enter a valid latitude.'),
-        'invalid_longitude' : ('Enter a valid longitude.'),
+        'invalid_latitude': ('Enter a valid latitude.'),
+        'invalid_longitude': ('Enter a valid longitude.'),
     }
 
     def __init__(self, *args, **kwargs):
@@ -47,8 +47,8 @@ class LatLongField(forms.MultiValueField):
             if data_list[1] in validators.EMPTY_VALUES:
                 raise forms.ValidationError(self.error_messages['invalid_longitude'])
             # SRID=4326;POINT(1.12345789 1.123456789)
-            srid_str = 'SRID=%d'%self.srid
-            point_str = 'POINT(%f %f)'%tuple(reversed(data_list))
+            srid_str = 'SRID=%d' % self.srid
+            point_str = 'POINT(%f %f)' % tuple(reversed(data_list))
             return ';'.join([srid_str, point_str])
         return None
 

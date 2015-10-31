@@ -35,9 +35,20 @@ def install_all_deps():
     local('pip install -q -r %(path)s/dependencies/dev.txt' % env)
 
 
+def pylint():
+    _ensure_virtualenv()
+    local('pylint --rcfile=conf/pylintrc.txt template_app | tee reports/template_app_pylint.txt; test ${PIPESTATUS[0]} -eq 0')
+    local('pylint --rcfile=conf/pylintrc.txt django_template | tee reports/django_template_pylint.txt; test ${PIPESTATUS[0]} -eq 0')
+
+
+def pep8():
+    _ensure_virtualenv()
+    local('pep8 --config=conf/pep8_config.txt template_app | tee reports/template_app_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
+    local('pep8 --config=conf/pep8_config.txt django_template | tee reports/django_template_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
+
 def precommit():
     _ensure_virtualenv()
     install_all_deps()
     local('mkdir -p reports')
-    local('pylint --rcfile=conf/pylintrc.txt template_app | tee reports/template_app_pylint.txt')
-    local('pylint --rcfile=conf/pylintrc.txt django_template | tee reports/django_template_pylint.txt')
+    pylint()
+    pep8()
