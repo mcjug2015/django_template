@@ -11,12 +11,13 @@ class LatLongWidget(forms.MultiWidget):
         From http://stackoverflow.com/questions/17021852/latitude-longitude-widget-for-pointfield
     """
 
-    def __init__(self, attrs=None, date_format=None, time_format=None):
+    def __init__(self, attrs=None):
         widgets = (forms.TextInput(attrs=attrs),
                    forms.TextInput(attrs=attrs))
-        super(LatLongWidget, self).__init__(widgets, attrs, date_format, time_format)
+        super(LatLongWidget, self).__init__(widgets, attrs)
 
     def decompress(self, value):
+        ''' turn the value into a tuple '''
         if value:
             return tuple(reversed(value.coords))
         return (None, None)

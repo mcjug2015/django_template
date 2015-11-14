@@ -12,6 +12,10 @@ def local_box():
     env.instance = 'local_box'
 
 
+def unit_test():
+    env.instance = 'unit_test'
+
+
 def _ensure_virtualenv():
     if "VIRTUAL_ENV" not in os.environ:
         sys.stderr.write("$VIRTUAL_ENV not found. Make sure to activate virtualenv first\n\n")
@@ -46,9 +50,18 @@ def pep8():
     local('pep8 --config=conf/pep8_config.txt template_app | tee reports/template_app_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
     local('pep8 --config=conf/pep8_config.txt django_template | tee reports/django_template_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
 
+
+def run_tests():
+    _ensure_virtualenv()
+    unit_test()
+    copy_settings()
+    local('python manage.py test --noinput')
+
+
 def precommit():
     _ensure_virtualenv()
     install_all_deps()
     local('mkdir -p reports')
     pylint()
     pep8()
+    run_tests()
