@@ -1,8 +1,8 @@
 ''' admin module for template app '''
 from django.contrib.gis import admin
-from template_app.models import CigarShop, FaveShops
 from django import forms
 from django.core import validators
+from template_app.models import CigarShop, FaveShops
 
 
 class LatLongWidget(forms.MultiWidget):

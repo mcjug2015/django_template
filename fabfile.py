@@ -61,6 +61,7 @@ def run_tests():
 def precommit():
     _ensure_virtualenv()
     install_all_deps()
+    local('rm -rf reports')
     local('mkdir -p reports')
     pylint()
     pep8()

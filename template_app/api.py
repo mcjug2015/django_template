@@ -1,13 +1,13 @@
 # pylint: disable=E1101
 ''' tastypie apis for the template app '''
-from tastypie.contrib.gis.resources import ModelResource
-from template_app.models import CigarShop, FaveShops
-from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import DjangoAuthorization
-from tastypie.constants import ALL
 from django.contrib.gis.geos.factory import fromstr
 from django.db.models import Q
 from django.contrib.gis.measure import D
+from tastypie.contrib.gis.resources import ModelResource
+from tastypie.authentication import SessionAuthentication
+from tastypie.authorization import DjangoAuthorization
+from tastypie.constants import ALL
+from template_app.models import CigarShop, FaveShops
 
 
 class CigarShopResource(ModelResource):
