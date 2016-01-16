@@ -55,7 +55,7 @@ def run_tests():
     _ensure_virtualenv()
     unit_test()
     copy_settings()
-    local('python manage.py test --noinput')
+    local('coverage run manage.py test --noinput --with-coverage')
 
 
 def precommit():

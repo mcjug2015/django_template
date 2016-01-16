@@ -112,8 +112,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
     '--cover-package=template_app',
-    '--with-coverage',
-    '--cover-min-percentage=11',
+    '--cover-min-percentage=44',
     '--cover-html',
     '--cover-html-dir=reports/coverage',
     '--cover-xml',
