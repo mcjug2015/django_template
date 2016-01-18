@@ -112,10 +112,12 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
     '--cover-package=template_app',
-    '--cover-min-percentage=44',
+    '--cover-min-percentage=47',
     '--cover-html',
     '--cover-html-dir=reports/coverage',
     '--cover-xml',
     '--cover-xml-file=reports/coverage.xml',
     '--cover-branches',
 ]
+
+FIXTURE_DIRS = ('template_app/tests/fixtures',)

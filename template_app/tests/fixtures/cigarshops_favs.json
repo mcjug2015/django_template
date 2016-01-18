@@ -1,0 +1,27 @@
+[{
+    "model": "template_app.cigarshop", 
+    "pk": 1, 
+    "fields": {
+        "name": "awesome cigar shop", 
+        "location": "SRID=4326;POINT (-77.0000000000000000 39.0000000000000000)", 
+        "owner": 1
+    }
+},
+{
+    "model": "template_app.cigarshop", 
+    "pk": 2, 
+    "fields": {
+        "name": "Signature Cigars", 
+        "location": "SRID=4326;POINT (-77.1302050000000037 39.0679220000000029)", 
+        "owner": 1
+    }
+},
+{
+    "model": "template_app.faveshops", 
+    "pk": 1, 
+    "fields": {
+        "name": "top cigar shops around dc", 
+        "owner": 1, 
+        "cigar_shops": [1, 2]
+    }
+}]

@@ -1,3 +1,4 @@
+# pylint: disable=W0212,C0103
 ''' Tests for the admin module '''
 from django.test.testcases import TestCase
 from mockito import mock
@@ -50,13 +51,13 @@ class LatLongFieldTests(TestCase):
 
 class CigarShopAdminTests(TestCase):
     ''' tests for the cigar shop admin class '''
-    
+
     def setUp(self):
         ''' set up the test '''
         mock_model = mock()
         mock_model._meta = None
         self.the_admin = admin.CigarShopAdmin(mock_model, None)
-    
+
     def test_formfield_for_dbfield_regular(self):
         ''' test default behavior when field name is not 'location' '''
         db_field = mock()
