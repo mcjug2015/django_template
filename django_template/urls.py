@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic.base import TemplateView
 from tastypie.api import Api
 from template_app.api import CigarShopResource, FaveShopsResource
 
@@ -26,6 +27,7 @@ API_V1.register(FaveShopsResource())
 
 
 urlpatterns = [
+    url(r'^welcome/', TemplateView.as_view(template_name='cigarshops/cigarshops.html')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(API_V1.urls)),
 ]

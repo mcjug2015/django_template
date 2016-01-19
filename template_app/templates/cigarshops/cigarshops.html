@@ -1,0 +1,14 @@
+{% extends "global/base.html" %}
+
+{% block the_title %}Cigar Shops{% endblock %}
+
+{% block extra_head %}
+    <script src="/static/js/template_app/cigarshops/cigarshops.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div data-ng-controller="CigarshopsController">
+        <div>hello</div>
+        <div data-ng-bind="value"></div>
+    </div>
+{% endblock %}

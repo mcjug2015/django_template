@@ -1,0 +1,21 @@
+<html data-ng-app="template_app">
+<head>
+<title>{% block the_title %}{% endblock %}</title>
+{% include "global/includes.html" %}
+<script type="text/javascript">
+angular.module('template_app', []).config(function($interpolateProvider){
+    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+    
+}).config(['$httpProvider', function($httpProvider){
+    // django and angular both support csrf tokens. This tells
+    // angular which cookie to add to what header.
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+}]);
+</script>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>
