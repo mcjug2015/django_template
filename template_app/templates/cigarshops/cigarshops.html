@@ -8,7 +8,17 @@
 
 {% block content %}
     <div data-ng-controller="CigarshopsController">
-        <div>hello</div>
-        <div data-ng-bind="value"></div>
+        <div data-ng-if="logged_in">
+            <div>
+                Wellcome
+                <div data-ng-bind="the_user.username"></div>
+                !
+            </div>
+        </div>
+        <div data-ng-if="!logged_in">
+            <input data-ng-model="username" type="text">
+            <input data-ng-model="password" type="password">
+            <button data-ng-click="django_login()">login</button>
+        </div>
     </div>
 {% endblock %}
