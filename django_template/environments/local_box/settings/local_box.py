@@ -106,3 +106,37 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'django_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/opt/logs/django.log',
+        },
+        'run_list_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/opt/logs/run_list.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'template_app.management.commands.run_list': {
+            'handlers': ['run_list_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

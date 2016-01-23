@@ -111,3 +111,36 @@ STATIC_URL = '/static/'
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 FIXTURE_DIRS = ('template_app/tests/fixtures',)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'django_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/opt/logs/test/django.log',
+        },
+        'run_list_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/opt/logs/test/run_list.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'template_app.management.commands.run_list': {
+            'handlers': ['run_list_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
