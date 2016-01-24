@@ -16,8 +16,8 @@
             </div>
         </div>
         <div data-ng-if="!logged_in">
-            <input data-ng-model="username" type="text">
-            <input data-ng-model="password" type="password">
+            <input data-ng-model="info_holder.username" type="text">
+            <input data-ng-model="info_holder.password" type="password">
             <button data-ng-click="django_login()">login</button>
         </div>
     </div>

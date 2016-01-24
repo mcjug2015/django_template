@@ -2,7 +2,7 @@
     module for file based shell command runner.
     avoid exposing to the outside world.
 '''
-# pylint: disable=R0914
+# pylint: disable=R0914,W0702
 import shlex
 import subprocess
 import sys
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                                                                       err_output))
                     else:
                         commands_succeeded += 1
-                except OSError:
+                except:
                     LOGGER.info("Prev command failed with os error")
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     lines = traceback.format_exception(exc_type, exc_value, exc_traceback)

@@ -1,7 +1,12 @@
-angular.module('template_app').factory('djangoLogin', [function() {
+angular.module('template_app').factory('djangoLogin', ['$http', '$q', function($http, $q) {
     var djangoLoginInstance = function(username, password, user_holder) {
-        user_holder.username = 'test';
-        user_holder.email = 'test@test.com';
+        return $http.post('/login_async/', {'username': username, 'password': password}).then(function(data){
+            if (data.data.status_code == '200') {
+                user_holder.username = username;
+                user_holder.email = 'coming soon@test.com';
+            }
+            return $q.when(data);
+        });
     };
     return djangoLoginInstance;
 }]);

@@ -14,10 +14,10 @@ def login_async(request):
         if user.is_active:
             login(request, user)
             return JsonResponse({'status': 'good to go',
-                                 'status code': 200})
+                                 'status_code': 200})
         else:
             return JsonResponse({'status': 'inactive user, go away',
-                                 'status code': 403})
+                                 'status_code': 403})
     else:
         return JsonResponse({'status': 'wrong u/p',
-                             'status code': 403})
+                             'status_code': 403})

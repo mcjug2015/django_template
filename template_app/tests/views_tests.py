@@ -19,7 +19,7 @@ class LoginAsyncTests(TestCase):
                                     data=json.dumps(json_input))
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status code'], 403)
+        self.assertEquals(resp_obj['status_code'], 403)
         self.assertEquals(resp_obj['status'], 'wrong u/p')
 
     def test_inactive_user(self):
@@ -33,7 +33,7 @@ class LoginAsyncTests(TestCase):
                                     data=json.dumps(json_input))
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status code'], 403)
+        self.assertEquals(resp_obj['status_code'], 403)
         self.assertEquals(resp_obj['status'], 'inactive user, go away')
 
     def test_success(self):
@@ -44,5 +44,5 @@ class LoginAsyncTests(TestCase):
                                     data=json.dumps(json_input))
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status code'], 200)
+        self.assertEquals(resp_obj['status_code'], 200)
         self.assertEquals(resp_obj['status'], 'good to go')
