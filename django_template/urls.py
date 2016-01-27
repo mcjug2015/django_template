@@ -18,11 +18,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 from tastypie.api import Api
-from template_app.api import CigarShopResource, FaveShopsResource
+from template_app.api import CigarShopResource, FaveShopsResource, UserResource
 from template_app.views import login_async
 
 
 API_V1 = Api(api_name='v1')
+API_V1.register(UserResource())
 API_V1.register(CigarShopResource())
 API_V1.register(FaveShopsResource())
 

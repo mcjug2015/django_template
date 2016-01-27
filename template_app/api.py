@@ -1,13 +1,29 @@
 # pylint: disable=E1101
 ''' tastypie apis for the template app '''
-from django.contrib.gis.geos.factory import fromstr
 from django.db.models import Q
 from django.contrib.gis.measure import D
+from django.contrib.gis.geos.factory import fromstr
+from django.contrib.auth.models import User
 from tastypie.contrib.gis.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import DjangoAuthorization
 from tastypie.constants import ALL
 from template_app.models import CigarShop, FaveShops
+from template_app.api_auth import UserObjectsAuthorization,\
+    OwnerObjectsOnlyAuthorization
+
+
+class UserResource(ModelResource):
+    ''' Use this to get info about the currently logged in user. '''
+
+    class Meta(object):
+        ''' meta info '''
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+        queryset = User.objects.all()
+        resource_name = 'auth/user'
+        excludes = ['password', 'is_superuser']
+        authorization = UserObjectsAuthorization()
+        filtering = {'username': ALL}
 
 
 class CigarShopResource(ModelResource):
@@ -37,9 +53,10 @@ class CigarShopResource(ModelResource):
     class Meta(object):
         ''' meta info '''
         queryset = CigarShop.objects.all()
-        allowed_methods = ['get']
+        list_allowed_methods = ['get', 'put', 'patch', 'post', 'delete']
+        detail_allowed_methods = ['get', 'put', 'patch', 'post', 'delete']
         authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = OwnerObjectsOnlyAuthorization()
         filtering = {'location': ALL}
 
 
@@ -49,6 +66,7 @@ class FaveShopsResource(ModelResource):
     class Meta(object):
         ''' meta info '''
         queryset = FaveShops.objects.all()
-        allowed_methods = ['get']
+        list_allowed_methods = ['get', 'put', 'patch', 'post', 'delete']
+        detail_allowed_methods = ['get', 'put', 'patch', 'post', 'delete']
         authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = OwnerObjectsOnlyAuthorization()

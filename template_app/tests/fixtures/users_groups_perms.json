@@ -15,4 +15,22 @@
         "groups": [], 
         "user_permissions": []
     }
+},
+{
+    "model": "auth.user", 
+    "pk": 2, 
+    "fields": {
+        "password": "pbkdf2_sha256$24000$9s3f4AsxLPUi$i0Hw7ms+exX1j7ArNEuPHVfxzeyBYdJOtrqIvCrLDdg=", 
+        "last_login": "2016-01-18T01:08:04Z", 
+        "is_superuser": false, 
+        "username": "another_test_user", 
+        "first_name": "bob", 
+        "last_name": "builder", 
+        "email": "bob.builder@test.com", 
+        "is_staff": false, 
+        "is_active": true, 
+        "date_joined": "2016-01-18T01:07:36Z", 
+        "groups": [], 
+        "user_permissions": []
+    }
 }]

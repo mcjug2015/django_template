@@ -44,10 +44,10 @@ class Command(BaseCommand):
             stripped_command = single_command.strip()
             if stripped_command:
                 commands_found += 1
-                command_args = shlex.split(stripped_command)
-                LOGGER.info("Found command %s,\nsplit into %s,\nabout to execute",
-                            stripped_command, command_args)
                 try:
+                    command_args = shlex.split(stripped_command)
+                    LOGGER.info("Found command %s,\nsplit into %s,\nabout to execute",
+                                stripped_command, command_args)
                     proc = subprocess.Popen(command_args,
                                             stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
