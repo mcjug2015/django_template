@@ -55,7 +55,14 @@ def run_tests():
     _ensure_virtualenv()
     unit_test()
     copy_settings()
-    local('coverage run manage.py test --noinput --with-coverage --cover-package=template_app --cover-min-percentage=85 --cover-html --cover-html-dir=reports/coverage --cover-xml --cover-xml-file=reports/coverage.xml --cover-branches')
+    local('coverage run manage.py test --noinput --with-coverage --cover-package=template_app --cover-min-percentage=85 --cover-html --cover-html-dir=reports/coverage --cover-xml --cover-xml-file=reports/coverage.xml --cover-branches --exclude-dir=template_app/tests/py_integration')
+
+
+def run_integration_tests():
+    _ensure_virtualenv()
+    unit_test()
+    copy_settings()
+    local('python manage.py test template_app.tests.py_integration --noinput')
 
 
 def precommit():
@@ -66,3 +73,4 @@ def precommit():
     pylint()
     pep8()
     run_tests()
+    run_integration_tests()
