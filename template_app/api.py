@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from tastypie.contrib.gis.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.constants import ALL
+from tastypie import fields
 from template_app.models import CigarShop, FaveShops
 from template_app.api_auth import UserObjectsAuthorization,\
     OwnerObjectsOnlyAuthorization
@@ -28,6 +29,7 @@ class UserResource(ModelResource):
 
 class CigarShopResource(ModelResource):
     ''' tastypie resource for cigarshop '''
+    owner = fields.ToOneField(UserResource, 'owner')
 
     def build_filters(self, filters=None):
         if filters is None:
@@ -62,6 +64,8 @@ class CigarShopResource(ModelResource):
 
 class FaveShopsResource(ModelResource):
     ''' tastypie resource for faveshops '''
+    owner = fields.ToOneField(UserResource, 'owner')
+    cigar_shops = fields.ToManyField(CigarShopResource, 'cigar_shops')
 
     class Meta(object):
         ''' meta info '''

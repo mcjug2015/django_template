@@ -11,6 +11,7 @@ class CigarShopResourceTests(TestCase):
     fixtures = ['users_groups_perms.json', 'cigarshops_favs.json']
 
     def setUp(self):
+        ''' set up the test '''
         self.the_resource = CigarShopResource()
 
     def test_build_filters_empty(self):
