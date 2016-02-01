@@ -8,6 +8,17 @@ env.prj_name = 'django_template'
 env.path = '/opt/%(prj_name)s' % env
 
 
+def one_time_node_install():
+    ''' installs node into currently sourced virtualenv, no existence checks done. '''
+    _ensure_virtualenv()
+    with lcd('/tmp'):
+        local('curl http://nodejs.org/dist/node-latest.tar.gz | tar xvz')
+        with lcd('node-v*'):
+            local('./configure --prefix=$VIRTUAL_ENV')
+            local('make install')
+    local('rm -rf /tmp/node-v*')
+
+
 def local_box():
     env.instance = 'local_box'
 

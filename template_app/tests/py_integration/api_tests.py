@@ -198,3 +198,35 @@ class FaveShopsResourceTests(TestCase):
         response = self.client.get(new_obj_uri)
         self.assertEquals(response.status_code, 404)
         self.assertEquals(FaveShops.objects.filter(owner__pk=1).count(), 1)
+
+    def test_unowned_relation(self):
+        '''
+            make sure that the api does not permit user to get a fave_shops
+            containing a cigar shop he doesn't own.
+        '''
+        self.client.login(username='another_test_user', password='testing123')
+        fave_shop_obj = {'name': 'another faves list',
+                         'owner': '/api/v1/auth/user/2/',
+                         'cigar_shops': ['/api/v1/cigarshop/1/']}
+        response = self.client.post('/api/v1/faveshops/',
+                                    json.dumps(fave_shop_obj),
+                                    content_type='application/json')
+        self.assertEquals(response.status_code, 401)
+
+        fave_shop_obj['cigar_shops'] = []
+        response = self.client.post('/api/v1/faveshops/',
+                                    json.dumps(fave_shop_obj),
+                                    content_type='application/json')
+        self.assertEquals(response.status_code, 201)
+        new_obj_uri = response._headers['location'][1]
+
+        fave_shop_obj['cigar_shops'].append('/api/v1/cigarshop/1/')
+        response = self.client.put(new_obj_uri,
+                                   json.dumps(fave_shop_obj),
+                                   content_type='application/json')
+        self.assertEquals(response.status_code, 401)
+
+        response = self.client.patch(new_obj_uri,
+                                     json.dumps({'cigar_shops': ['/api/v1/cigarshop/2/']}),
+                                     content_type='application/json')
+        self.assertEquals(response.status_code, 401)
