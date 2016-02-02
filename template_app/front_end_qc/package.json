@@ -1,0 +1,9 @@
+{
+  "name": "template_app",
+  "devDependencies": {
+    "jshint": "2.9.1"
+  },
+  "scripts": {
+    "jshint": "jshint ../static/js/template_app/**/*.js"
+  }
+}

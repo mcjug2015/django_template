@@ -1,4 +1,5 @@
 angular.module('template_app').controller('GlobalController', ['$scope', function($scope) {
+    "use strict";
     $scope.logged_in = $('#global_username').text().length > 0;
     
     $scope.the_user = {'username': '', 'email': ''};

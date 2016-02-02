@@ -48,6 +48,8 @@ def install_all_deps():
     _ensure_virtualenv()
     install_prod_deps()
     local('pip install -q -r %(path)s/dependencies/dev.txt' % env)
+    with lcd('template_app/front_end_qc'):
+        local('npm install')
 
 
 def pylint():
@@ -76,6 +78,12 @@ def run_integration_tests():
     local('python manage.py test template_app.tests.py_integration --noinput')
 
 
+def jshint():
+    _ensure_virtualenv()
+    with lcd('template_app/front_end_qc'):
+        local('npm run jshint')
+
+
 def precommit():
     _ensure_virtualenv()
     install_all_deps()
@@ -83,5 +91,6 @@ def precommit():
     local('mkdir -p reports')
     pylint()
     pep8()
+    jshint()
     run_tests()
     run_integration_tests()
