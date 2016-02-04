@@ -60,7 +60,7 @@ def pylint():
 
 def pep8():
     _ensure_virtualenv()
-    local('pep8 --config=conf/pep8_config.txt template_app | tee reports/template_app_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
+    local('pep8 --config=conf/pep8_config.txt template_app --exclude=front_end_qc | tee reports/template_app_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
     local('pep8 --config=conf/pep8_config.txt django_template | tee reports/django_template_pep8.txt; test ${PIPESTATUS[0]} -eq 0')
 
 
@@ -84,6 +84,12 @@ def jshint():
         local('npm run jshint')
 
 
+def jasmine():
+    _ensure_virtualenv()
+    with lcd('template_app/front_end_qc'):
+        local('npm run jasmine')
+
+
 def precommit():
     _ensure_virtualenv()
     install_all_deps()
@@ -94,3 +100,4 @@ def precommit():
     jshint()
     run_tests()
     run_integration_tests()
+    jasmine()
