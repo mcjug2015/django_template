@@ -1,4 +1,4 @@
-angular.module('template_app', ['ngCookies']).config(function($interpolateProvider){
+angular.module('template_app', ['ngResource']).config(function($interpolateProvider){
     // not gonna be using django templates a lot, but don't want them to collide either.
     $interpolateProvider.startSymbol('{[{');
     $interpolateProvider.endSymbol('}]}');

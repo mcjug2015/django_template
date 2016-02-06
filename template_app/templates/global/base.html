@@ -4,16 +4,13 @@
 
 {% include "global/includes.html" %}
 
+<script src="/static/js/template_app/global/global_resources.js"></script>
 <script src="/static/js/template_app/global/global_services.js"></script>
 <script src="/static/js/template_app/global/global_controller.js"></script>
 {% block extra_head %}{% endblock %}
 </head>
 <body>
  <div data-ng-controller="GlobalController">
-     <div data-ng-hide="true">
-         <div id="global_username">{{request.user.username}}</div>
-         <div id="global_useremail">{{request.user.email}}</div>
-     </div>
  {% block content %}{% endblock %}
 </div>
 </body>
