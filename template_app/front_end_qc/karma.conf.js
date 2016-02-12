@@ -24,21 +24,26 @@ module.exports = function(config) {
       'lib/js/angular-mocks.1.3.15.js',
       '../static/js/template_app/global/app_init.js',
       '../static/js/template_app/**/*.js',
-      'tests/**/*.js'
+      'tests/**/*.js',
+      '../static/html/**/*.html'
     ],
-
 
     // list of files to exclude
     exclude: [
     ],
-
+    
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
         '../static/js/template_app/**/*.js': 'coverage',
+        '../static/html/**/*.html': 'ng-html2js',
     },
 
-
+    ngHtml2JsPreprocessor: {
+        stripPrefix: '/opt/django_template/template_app',
+        moduleName: 'test_html_js'
+    },
+    
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter

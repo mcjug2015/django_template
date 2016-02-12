@@ -90,6 +90,12 @@ def jasmine():
         local('npm run jasmine')
 
 
+def jasmine_stay_on():
+    _ensure_virtualenv()
+    with lcd('template_app/front_end_qc'):
+        local('npm run jasmine_stay_on')
+
+
 def precommit():
     _ensure_virtualenv()
     install_all_deps()
