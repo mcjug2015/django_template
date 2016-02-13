@@ -13,7 +13,7 @@ describe("Tests for the global controller", function() {
     }));
     
     it("inits the_user obj and calls retrieve user", function() {
-        expect(scope.the_user).toEqual({'username': '', 'email': ''});
-        expect(retrieveUserSpy).toHaveBeenCalledWith(scope.the_user);
+        expect(scope.theUser).toEqual({'username': '', 'email': ''});
+        expect(retrieveUserSpy).toHaveBeenCalledWith(scope.theUser);
     });
 });

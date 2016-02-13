@@ -1,1 +1,13 @@
-<div>MOOOOO!</div>
+<div data-ng-if="diruser.username">
+    <div>
+        Welcome
+        <div data-ng-bind="diruser.username"></div>
+        (<div data-ng-bind="diruser.email"></div>)
+    </div>
+    <button data-ng-click="django_logout()">logout</button>
+</div>
+<div data-ng-if="!diruser.username">
+    <input data-ng-model="info_holder.username" type="text">
+    <input data-ng-model="info_holder.password" type="password">
+    <button data-ng-click="django_login()">login</button>
+</div>
