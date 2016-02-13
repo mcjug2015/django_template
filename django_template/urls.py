@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 from tastypie.api import Api
 from template_app.api import CigarShopResource, FaveShopsResource, UserResource
-from template_app.views import login_async
+from template_app.views import login_async, logout_async
 
 
 API_V1 = Api(api_name='v1')
@@ -31,6 +31,7 @@ API_V1.register(FaveShopsResource())
 urlpatterns = [
     url(r'^welcome/', TemplateView.as_view(template_name='cigarshops/cigarshops.html')),
     url(r'^login_async/', login_async),
+    url(r'^logout_async/', logout_async),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(API_V1.urls)),
 ]

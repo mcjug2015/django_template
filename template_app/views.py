@@ -1,6 +1,6 @@
 ''' views module for template app '''
 import json
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http.response import JsonResponse
 
 
@@ -21,3 +21,9 @@ def login_async(request):
     else:
         return JsonResponse({'status': 'wrong u/p',
                              'status_code': 403})
+
+
+def logout_async(request):
+    ''' logout the user associated with the request, no check if currently logged in. '''
+    logout(request)
+    return JsonResponse({'status': 'logout success'})

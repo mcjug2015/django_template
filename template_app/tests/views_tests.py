@@ -46,3 +46,25 @@ class LoginAsyncTests(TestCase):
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['status_code'], 200)
         self.assertEquals(resp_obj['status'], 'good to go')
+
+
+class LogoutAsyncTests(TestCase):
+    ''' tests for the logout_async view '''
+    fixtures = ['users_groups_perms.json']
+
+    def test_success(self):
+        ''' make sure logout_async truly logs the user out. '''
+        response = self.client.get('/api/v1/auth/user/1/')
+        self.assertEquals(response.status_code, 401)
+
+        self.client.login(username='test_user', password='testing123')
+        response = self.client.get('/api/v1/auth/user/1/')
+        self.assertEquals(response.status_code, 200)
+
+        response = self.client.get('/logout_async/')
+        self.assertEquals(response.status_code, 200)
+        resp_obj = json.loads(response.content)
+        self.assertEquals(resp_obj['status'], 'logout success')
+
+        response = self.client.get('/api/v1/auth/user/1/')
+        self.assertEquals(response.status_code, 401)

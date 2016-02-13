@@ -1,4 +1,5 @@
-angular.module('template_app').directive('dtUserCpHeader', ['djangoLogin', function(djangoLogin) {
+angular.module('template_app').directive('dtUserCpHeader', ['djangoLogin', 'djangoLogout',
+                                                            function(djangoLogin, djangoLogout) {
     "use strict";
     return {
         restrict: 'E',
@@ -10,6 +11,9 @@ angular.module('template_app').directive('dtUserCpHeader', ['djangoLogin', funct
             scope.info_holder = {'username': '', 'password': ''};
             scope.django_login = function() {
                 djangoLogin(scope.info_holder.username, scope.info_holder.password, scope.diruser);
+            };
+            scope.django_logout = function() {
+                djangoLogout(scope.diruser);
             };
         },
     };

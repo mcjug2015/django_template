@@ -8,10 +8,12 @@ describe("tests for the global directives", function() {
     var parentScope;
     var dirScope;
     var djangoLoginSpy = jasmine.createSpy('djangoLogin');
+    var djangoLogoutSpy = jasmine.createSpy('djangoLogout');
     
     describe("tests for the user control panel header directive", function() {
         beforeEach(module(function($provide) {
             $provide.value("djangoLogin", djangoLoginSpy);
+            $provide.value("djangoLogout", djangoLogoutSpy);
         }));
         
         beforeEach(inject(function(_$rootScope_, _$compile_) {
@@ -31,6 +33,7 @@ describe("tests for the global directives", function() {
             expect(dirScope.info_holder.username).toEqual('');
             expect(dirScope.info_holder.password).toEqual('');
             expect(dirScope.django_login).toBeDefined();
+            expect(dirScope.django_logout).toBeDefined();
         });
         
         it("fills out the dtUserCpHeader template with logout stuff when diruser is truthy", function() {
@@ -48,6 +51,14 @@ describe("tests for the global directives", function() {
             dirScope = elm.isolateScope();
             dirScope.django_login();
             expect(djangoLoginSpy).toHaveBeenCalledWith('', '', undefined);
+        });
+        
+        it("calls through to djangoLogout service when django_logout is invoked", function() {
+            $compile(elm)(parentScope);
+            parentScope.$digest();
+            dirScope = elm.isolateScope();
+            dirScope.django_logout();
+            expect(djangoLogoutSpy).toHaveBeenCalledWith(undefined);
         });
     });
 });

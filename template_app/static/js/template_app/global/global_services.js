@@ -6,6 +6,10 @@ angular.module('template_app').factory('retrieveUser', ['$q', 'User', function($
                 user_holder.username = data.objects[0].username;
                 user_holder.email = data.objects[0].email;
                 user_holder.the_obj = data.objects[0];
+            } else {
+                user_holder.username = '';
+                user_holder.email = '';
+                user_holder.the_obj = null;
             }
             return $q.when(true);
         });
@@ -26,4 +30,17 @@ angular.module('template_app').factory('djangoLogin', ['$http', '$q', 'retrieveU
         });
     };
     return djangoLoginInstance;
+}]);
+
+
+angular.module('template_app').factory('djangoLogout', ['$http', '$q', 'retrieveUser',
+                                                       function($http, $q, retrieveUser) {
+    "use strict";
+    var djangoLogoutInstance = function(user_holder) {
+        return $http.get('/logout_async/').then(function(data){
+            retrieveUser(user_holder);
+            return $q.when(true);
+        });
+    };
+    return djangoLogoutInstance;
 }]);

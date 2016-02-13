@@ -33,12 +33,12 @@ describe("Tests for global services", function(){
             expect(userResource.get).toHaveBeenCalled();
         });
 
-        it("harmlessly passes through when some number of objects other then 1 is returned", function() {
-            var retval = {};
+        it("sets stuff to empty when some number of objects other then 1 is returned", function() {
+            var retval = {'username': 'a', 'email': 'b', 'the_obj': 'c'};
             retrieveUserService(retval);
-            expect(retval).toEqual({});
+            expect(retval).toEqual({'username': 'a', 'email': 'b', 'the_obj': 'c'});
             $rootScope.$digest();
-            expect(retval).toEqual({});
+            expect(retval).toEqual({'username': '', 'email': '', 'the_obj': null});
             expect(userResource.get).toHaveBeenCalled();
         });
     });
@@ -72,6 +72,29 @@ describe("Tests for global services", function(){
             djangoLoginService('a', 'b', {});
             httpBackend.flush();
             expect(retrieveUser).not.toHaveBeenCalled();
+        });
+    });
+    
+    describe("Tests for the djangoLogout service", function() {
+        var djangoLogoutService;
+        var httpBackend;
+        var retrieveUser;
+        
+        beforeEach(module(function($provide) {
+            retrieveUser = jasmine.createSpy('retrieveUser');
+            $provide.value("retrieveUser", retrieveUser);
+        }));
+        
+        beforeEach(inject(function (djangoLogout, $httpBackend) {
+            djangoLogoutService = djangoLogout;
+            httpBackend = $httpBackend;
+        }));
+        
+        it("Calls retrieveUser on 200 from http login.", function() {
+            httpBackend.expectGET('/logout_async/').respond(200, {'status': 'logout success'});
+            djangoLogoutService({});
+            httpBackend.flush();
+            expect(retrieveUser).toHaveBeenCalledWith({});
         });
     });
 });
