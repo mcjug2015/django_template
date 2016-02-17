@@ -10,6 +10,11 @@
 {% block content %}
     <div data-ng-controller="CigarshopsController">
         <dt-user-cp-header diruser="theUser"></dt-user-cp-header>
-        <div>Cigarshops and lists of favourite cigarshops will go here</div>
+        <div data-ng-if="theUser.username">
+            <dt-cigar-shops></dt-cigar-shops>
+        </div>
+        <div data-ng-if="!theUser.username">
+            You must login to use this site
+        </div>
     </div>
 {% endblock %}
