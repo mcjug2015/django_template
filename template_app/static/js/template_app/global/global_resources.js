@@ -4,7 +4,7 @@ angular.module('template_app').factory('User', function($resource) {
 
 
 angular.module('template_app').factory('CigarShop', function($resource) {
-    return $resource('/api/v1/cigarshop/:id', null, {
+    return $resource('/api/v1/cigarshop/:id', {}, {
         'update': {method: 'PUT'},
         'partial_update': {method: 'PATCH'}
     });

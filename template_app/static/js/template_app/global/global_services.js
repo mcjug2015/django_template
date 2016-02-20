@@ -44,3 +44,18 @@ angular.module('template_app').factory('djangoLogout', ['$http', '$q', 'retrieve
     };
     return djangoLogoutInstance;
 }]);
+
+
+angular.module('template_app').factory('saveAndGet', ['$q', '$http',
+                                                      function($q, $http) {
+    // calls the provided save method with the supplied params.
+    // expects a location header to be returned. does a get on that location header
+    // and returns the object that was retrieved.
+    "use strict";
+    var saveAndGetInstance = function(saveMethod, methodParams) {
+        return saveMethod(methodParams, function(data, headers) {
+            return $http.get(headers('location'));
+        }).$promise;
+    };
+    return saveAndGetInstance;
+}]);

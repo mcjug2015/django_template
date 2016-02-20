@@ -52,7 +52,6 @@ describe("Tests for the global resources", function() {
                                 'owner': '/api/v1/auth/user/1/',
                                 "location": {"coordinates": [-77.0, 39.0], "type": "Point"}};
             
-            
             httpBackend.expectPOST('/api/v1/cigarshop', cigarShopObj).respond(201, {'it': 'worked'});
             retval = resourceUnderTest.save(cigarShopObj);
             httpBackend.flush();

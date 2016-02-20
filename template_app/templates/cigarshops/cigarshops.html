@@ -11,7 +11,7 @@
     <div data-ng-controller="CigarshopsController">
         <dt-user-cp-header diruser="theUser"></dt-user-cp-header>
         <div data-ng-if="theUser.username">
-            <dt-cigar-shops></dt-cigar-shops>
+            <dt-cigar-shops currentuser="theUser"></dt-cigar-shops>
         </div>
         <div data-ng-if="!theUser.username">
             You must login to use this site

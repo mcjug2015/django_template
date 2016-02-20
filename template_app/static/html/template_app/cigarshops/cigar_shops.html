@@ -1,6 +1,12 @@
 <div>
-    <span>Here are your cigar shops:</span>
+    <span>Create a new cigarshop:</span>
+    <div>
+        <dt-cigar-shop shop='shopToSave' editable="true"></dt-cigar-shop>
+        <button data-ng-click="saveShop()">Create</button>
+    </div>
+    
+    <span>Here are your existing cigar shops:</span>
     <div data-ng-repeat="(id, curshop) in shops">
-        <dt-cigar-shop shop='curshop'></dt-cigar-shop>
+        <dt-cigar-shop shop='curshop' editable="false"></dt-cigar-shop>
     </div>
 </div>

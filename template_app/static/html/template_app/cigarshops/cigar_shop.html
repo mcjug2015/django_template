@@ -1,5 +1,16 @@
-<div>
+<div data-ng-if="!editable">
     <div data-ng-bind="shop.name"></div>
     <div>Lat: <div data-ng-bind="shop.location.coordinates[1] | number : 6"></div></div>
     <div>Long: <div data-ng-bind="shop.location.coordinates[0] | number : 6"></div></div>
+</div>
+<div data-ng-if="editable">
+    <input type="text" data-ng-model="shop.name"/>
+    <div>
+        Lat:
+        <input type="text" data-ng-model="shop.location.lat"/>
+    </div>
+    <div>
+        Long:
+        <input type="text" data-ng-model="shop.location.long"/>
+    </div>
 </div>

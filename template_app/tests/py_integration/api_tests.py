@@ -179,7 +179,7 @@ class FaveShopsResourceTests(TestCase):
         response = self.client.get(new_obj_uri)
         self.assertEquals(response.status_code, 200)
         retrieved_new_obj = json.loads(response.content)
-        self.assertIn('/api/v1/cigarshop/1/', retrieved_new_obj['cigar_shops'])
+        self.assertIn('/api/v1/cigarshop/1', retrieved_new_obj['cigar_shops'])
 
         # patch to only update a single field
         response = self.client.patch(new_obj_uri,
@@ -190,7 +190,7 @@ class FaveShopsResourceTests(TestCase):
         response = self.client.get(new_obj_uri)
         self.assertEquals(response.status_code, 200)
         retrieved_new_obj = json.loads(response.content)
-        self.assertIn('/api/v1/cigarshop/2/', retrieved_new_obj['cigar_shops'])
+        self.assertIn('/api/v1/cigarshop/2', retrieved_new_obj['cigar_shops'])
 
         # delete to get rid of the object
         response = self.client.delete(new_obj_uri)

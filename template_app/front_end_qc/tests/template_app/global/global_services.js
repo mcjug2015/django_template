@@ -97,4 +97,36 @@ describe("Tests for global services", function(){
             expect(retrieveUser).toHaveBeenCalledWith({});
         });
     });
+    
+    describe("tests for the saveAndGet service", function() {
+        var $httpBackend;
+        var saveAndGetService;
+        var saveMethod;
+        var headersMethod;
+        var $q;
+        var retval;
+        
+        beforeEach(inject(function (saveAndGet, _$httpBackend_, _$q_) {
+            saveAndGetService = saveAndGet;
+            $httpBackend = _$httpBackend_;
+            $q = _$q_;
+        }));
+        
+        it("calls http get on location header after invoking save method", function() {
+            saveMethod = jasmine.createSpy('saveMethod').and.returnValue({'$promise': $q.when(true)});
+            headersMethod = jasmine.createSpy('headersMethod').and.returnValue('/test_url/');
+            
+            // headers aren't forwarded with a regular $promise.then, so gotta get creative
+            // to get at the inner method.
+            saveAndGetService(saveMethod, {});
+            expect(saveMethod).toHaveBeenCalled();
+            
+            $httpBackend.expectGET('/test_url/').respond(200, {'good': 'times'});
+            saveMethod.calls.first().args[1]({}, headersMethod).then(function(data) {
+                retval = data.data;
+            });
+            $httpBackend.flush();
+            expect(retval.good).toEqual('times');
+        });
+    });
 });
