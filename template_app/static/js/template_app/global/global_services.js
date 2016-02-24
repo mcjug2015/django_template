@@ -53,9 +53,13 @@ angular.module('template_app').factory('saveAndGet', ['$q', '$http',
     // and returns the object that was retrieved.
     "use strict";
     var saveAndGetInstance = function(saveMethod, methodParams) {
+        var newObjUri = 'invalid';
         return saveMethod(methodParams, function(data, headers) {
-            return $http.get(headers('location'));
-        }).$promise;
+            newObjUri = headers('location');
+            return $q.when(true);
+        }).$promise.then(function() {
+            return $http.get(newObjUri);
+        });
     };
     return saveAndGetInstance;
 }]);

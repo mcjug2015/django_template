@@ -33,10 +33,15 @@ angular.module('template_app').directive('dtCigarShops', ['CigarShop', 'saveAndG
                 delete scope.shopToSave.location.lat;
                 delete scope.shopToSave.location.long;
                 saveAndGet(CigarShop.save, scope.shopToSave).then(function(newShop) {
-                    scope.shops[newShop.id] = newShop;
+                    scope.shops[newShop.data.id] = newShop.data;
                     scope.shopToSave = {'name': '',
                                         'location': {"lat": 0, "long": 0, "type": "Point"},
                                         'owner': scope.currentuser.the_obj.resource_uri};
+                });
+            };
+            scope.removeShop = function(shopId) {
+                CigarShop.remove({'id': shopId}).$promise.then(function() {
+                    delete scope.shops[shopId];
                 });
             };
             CigarShop.get().$promise.then(function(data) {

@@ -14,7 +14,7 @@ describe("tests for the cigar shops directives", function() {
     beforeEach(module("template_app"));
     beforeEach(module('test_html_js'));
     beforeEach(module(function($provide) {
-        cigarShopSpy = jasmine.createSpyObj('cigarShopSpy', ['get']);
+        cigarShopSpy = jasmine.createSpyObj('cigarShopSpy', ['get', 'remove']);
         $provide.value("CigarShop", cigarShopSpy);
 
         saveAndGetSpy = jasmine.createSpy('saveAndGet');
@@ -72,6 +72,7 @@ describe("tests for the cigar shops directives", function() {
             returnedCigarShops = [];
             elm = angular.element('<dt-cigar-shops currentuser="theUser"></dt-cigar-shops>');
             cigarShopSpy.get.and.returnValue({'$promise': $q.when({'objects': returnedCigarShops})});
+            cigarShopSpy.remove.and.returnValue({'$promise': $q.when(true)});
             parentScope.theUser = {'the_obj': {'resource_uri': 'test_owner_uri'}};
             
             saveAndGetResults = {};
@@ -100,6 +101,7 @@ describe("tests for the cigar shops directives", function() {
             dirScope = elm.isolateScope();
             expect(elm.find('span').first().text()).toEqual('Create a new cigarshop:');
             expect(elm.find('span').last().text()).toEqual('Here are your existing cigar shops:');
+            expect(elm.find('div div button').last().text()).toEqual('Delete');
             expect(elm.find('dt-cigar-shop').size()).toEqual(2);
         });
         
@@ -109,15 +111,30 @@ describe("tests for the cigar shops directives", function() {
             dirScope = elm.isolateScope();
             expect(elm.find('dt-cigar-shop').size()).toEqual(1);
             
-            saveAndGetResults.id = 'testid';
-            saveAndGetResults.name = 'freshly saved shop';
-            saveAndGetResults.location = {"coordinates": [-75.111111, 37.222222], "type": "Point"};
+            saveAndGetResults.data = {};
+            saveAndGetResults.data.id = 'testid';
+            saveAndGetResults.data.name = 'freshly saved shop';
+            saveAndGetResults.data.location = {"coordinates": [-75.111111, 37.222222], "type": "Point"};
             dirScope.shopToSave.name = 'i will get reset';
             dirScope.saveShop();
             parentScope.$digest();
             expect(elm.find('dt-cigar-shop').size()).toEqual(2);
             expect(elm.find('dt-cigar-shop').last().find('div div').first().text()).toEqual('freshly saved shop');
             expect(dirScope.shopToSave.name).toEqual('');
+        });
+        
+        it("invokes the removeShop method and updates on success", function() {
+            $compile(elm)(parentScope);
+            parentScope.$digest();
+            dirScope = elm.isolateScope();
+            expect(elm.find('dt-cigar-shop').size()).toEqual(1);
+            
+            dirScope.shops = {1: {id: 1,
+                                  name: 'i will be deleted'}};
+            expect(dirScope.shops[1]).toBeDefined();
+            dirScope.removeShop(1);
+            parentScope.$digest();
+            expect(dirScope.shops[1]).not.toBeDefined();
         });
     });
 });

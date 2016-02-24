@@ -116,17 +116,20 @@ describe("Tests for global services", function(){
             saveMethod = jasmine.createSpy('saveMethod').and.returnValue({'$promise': $q.when(true)});
             headersMethod = jasmine.createSpy('headersMethod').and.returnValue('/test_url/');
             
-            // headers aren't forwarded with a regular $promise.then, so gotta get creative
-            // to get at the inner method.
-            saveAndGetService(saveMethod, {});
-            expect(saveMethod).toHaveBeenCalled();
-            
-            $httpBackend.expectGET('/test_url/').respond(200, {'good': 'times'});
-            saveMethod.calls.first().args[1]({}, headersMethod).then(function(data) {
+            saveAndGetService(saveMethod, {}).then(function(data) {
                 retval = data.data;
             });
+            expect(saveMethod).toHaveBeenCalled();
+            $httpBackend.expectGET('invalid').respond(200, {'good': 'times'});
+            $rootScope.$digest();
             $httpBackend.flush();
             expect(retval.good).toEqual('times');
+            
+            // headers aren't forwarded with a regular $promise.then, so gotta get creative
+            // to get at the inner method.
+            expect(headersMethod).not.toHaveBeenCalled();
+            saveMethod.calls.first().args[1]({}, headersMethod);
+            expect(headersMethod).toHaveBeenCalled();
         });
     });
 });

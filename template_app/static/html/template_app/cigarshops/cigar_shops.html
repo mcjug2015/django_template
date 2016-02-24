@@ -8,5 +8,6 @@
     <span>Here are your existing cigar shops:</span>
     <div data-ng-repeat="(id, curshop) in shops">
         <dt-cigar-shop shop='curshop' editable="false"></dt-cigar-shop>
+        <button data-ng-click="removeShop(curshop.id)">Delete</button>
     </div>
 </div>
