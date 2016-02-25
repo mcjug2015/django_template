@@ -1,9 +1,10 @@
-<div data-ng-if="!editable">
+<div data-ng-if="!shop.beingEdited">
     <div data-ng-bind="shop.name"></div>
     <div>Lat: <div data-ng-bind="shop.location.coordinates[1] | number : 6"></div></div>
     <div>Long: <div data-ng-bind="shop.location.coordinates[0] | number : 6"></div></div>
+    <button data-ng-if="shop.editable" data-ng-click="startEditing()">Update</button>
 </div>
-<div data-ng-if="editable">
+<div data-ng-if="shop.beingEdited">
     <input type="text" data-ng-model="shop.name"/>
     <div>
         Lat:
@@ -13,4 +14,9 @@
         Long:
         <input type="text" data-ng-model="shop.location.long"/>
     </div>
+    <div data-ng-if="shop.editable">
+        <button data-ng-click="saveEdits()">Save Update</button>
+        <button data-ng-click="cancelEdits()">Cancel Update</button>
+    </div>
+    
 </div>
