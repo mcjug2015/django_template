@@ -1,4 +1,5 @@
-angular.module('template_app').directive('dtCigarShop', ['CigarShop', function(CigarShop) {
+angular.module('template_app').directive('dtCigarShop', ['CigarShop', 'getServerShop',
+                                                         function(CigarShop, getServerShop) {
     "use strict";
     return {
         restrict: 'E',
@@ -16,9 +17,7 @@ angular.module('template_app').directive('dtCigarShop', ['CigarShop', function(C
             };
             
             scope.saveEdits = function() {
-                scope.shop.location.coordinates = [parseFloat(scope.shop.location.long),
-                                                   parseFloat(scope.shop.location.lat)];
-                CigarShop.update({id: scope.shop.id}, scope.shop).$promise.then(function() {
+                CigarShop.update({id: scope.shop.id}, getServerShop(scope.shop)).$promise.then(function() {
                     scope.shop.beingEdited = false;
                 });
             };
@@ -27,8 +26,10 @@ angular.module('template_app').directive('dtCigarShop', ['CigarShop', function(C
 }]);
 
 
-angular.module('template_app').directive('dtCigarShops', ['CigarShop', 'saveAndGet',
-                                                          function(CigarShop, saveAndGet) {
+angular.module('template_app').directive('dtCigarShops', ['CigarShop', 'saveAndGet', 'getServerShop',
+                                                          'getClientShop',
+                                                          function(CigarShop, saveAndGet, getServerShop,
+                                                                   getClientShop) {
     "use strict";
     return {
         restrict: 'E',
@@ -39,24 +40,16 @@ angular.module('template_app').directive('dtCigarShops', ['CigarShop', 'saveAndG
         link: function (scope, element, attrs) {
             scope.shops = {};
             scope.shopToSave = {'name': '',
-                                'location': {"lat": 0, "long": 0, "type": "Point"},
+                                'location': {"lat": 0, "long": 0},
                                 'owner': scope.currentuser.the_obj.resource_uri,
                                 'beingEdited': true,
                                 'editable': false};
             scope.saveShop = function() {
-                scope.shopToSave.location.coordinates = [parseFloat(scope.shopToSave.location.long),
-                                                         parseFloat(scope.shopToSave.location.lat)];
-                delete scope.shopToSave.location.lat;
-                delete scope.shopToSave.location.long;
-                saveAndGet(CigarShop.save, scope.shopToSave).then(function(newShop) {
-                    var actualShop = newShop.data;
-                    actualShop.beingEdited = false;
-                    actualShop.editable = true;
-                    actualShop.location.lat = actualShop.location.coordinates[1];
-                    actualShop.location.long = actualShop.location.coordinates[0];
+                saveAndGet(CigarShop.save, getServerShop(scope.shopToSave)).then(function(newShop) {
+                    var actualShop = getClientShop(newShop.data);
                     scope.shops[actualShop.id] = actualShop;
                     scope.shopToSave = {'name': '',
-                                        'location': {"lat": 0, "long": 0, "type": "Point"},
+                                        'location': {"lat": 0, "long": 0},
                                         'owner': scope.currentuser.the_obj.resource_uri,
                                         'beingEdited': true,
                                         'editable': false};
@@ -69,11 +62,8 @@ angular.module('template_app').directive('dtCigarShops', ['CigarShop', 'saveAndG
             };
             CigarShop.get().$promise.then(function(data) {
                 data.objects.forEach(function(curShop) {
-                    curShop.beingEdited = false;
-                    curShop.editable = true;
-                    curShop.location.lat = curShop.location.coordinates[1];
-                    curShop.location.long = curShop.location.coordinates[0];
-                    scope.shops[curShop.id] = curShop;
+                    var clientShop = getClientShop(curShop);
+                    scope.shops[clientShop.id] = clientShop;
                 });
             });
         },

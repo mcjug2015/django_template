@@ -8,8 +8,9 @@ describe("tests for the cigar shops directives", function() {
     var $q;
     var cigarShopSpy;
     var saveAndGetSpy;
+    var getServerShopSpy;
+    var getClientShopSpy;
     var returnedCigarShops;
-    
 
     beforeEach(module("template_app"));
     beforeEach(module('test_html_js'));
@@ -19,6 +20,12 @@ describe("tests for the cigar shops directives", function() {
 
         saveAndGetSpy = jasmine.createSpy('saveAndGet');
         $provide.value("saveAndGet", saveAndGetSpy);
+        
+        getServerShopSpy = jasmine.createSpy('getServerShop');
+        $provide.value("getServerShop", getServerShopSpy);
+        
+        getClientShopSpy = jasmine.createSpy('getClientShop');
+        $provide.value("getClientShop", getClientShopSpy);
     }));
     
     beforeEach(inject(function(_$rootScope_, _$compile_, _$q_) {
@@ -37,7 +44,7 @@ describe("tests for the cigar shops directives", function() {
         it("fills out the dtCigarShop template with shop info", function() {
             parentScope.theShop = {'name': 'Test shop for directive',
                                    'owner': '/api/v1/auth/user/1/',
-                                   "location": {"coordinates": [-75.130205, 37.067922], "type": "Point"},
+                                   "location": {"lat": 37.067922, "long": -75.130205},
                                    'beingEdited': false,
                                    'editable': true};
             $compile(elm)(parentScope);
@@ -72,8 +79,7 @@ describe("tests for the cigar shops directives", function() {
         it("shows editable fields when startEditing is called", function() {
             parentScope.theShop = {'name': 'Test editable shop to be',
                                    'owner': '/api/v1/auth/user/1/',
-                                   "location": {"coordinates": [6.8, 1.3], "type": "Point",
-                                                "lat": 1.3, "long": 6.8},
+                                   "location": {"lat": 1.3, "long": 6.8},
                                    'beingEdited': false,
                                    'editable': true};
             $compile(elm)(parentScope);
@@ -92,8 +98,7 @@ describe("tests for the cigar shops directives", function() {
         it("hides editable fields when cancelEdits is called", function() {
             parentScope.theShop = {'name': 'Test shop',
                                    'owner': '/api/v1/auth/user/1/',
-                                   "location": {"coordinates": [6.8, 1.3], "type": "Point",
-                                                "lat": 1.3, "long": 6.8},
+                                   "location": {"lat": 1.3, "long": 6.8},
                                    'beingEdited': true,
                                    'editable': true};
             $compile(elm)(parentScope);
@@ -114,8 +119,7 @@ describe("tests for the cigar shops directives", function() {
             parentScope.theShop = {'id': 3,
                                    'name': 'Test shop',
                                    'owner': '/api/v1/auth/user/1/',
-                                   "location": {"coordinates": [6.8, 1.3], "type": "Point",
-                                                "lat": 1.11, "long": 7.77},
+                                   "location": {"lat": 1.11, "long": 7.77},
                                    'beingEdited': true,
                                    'editable': true};
             $compile(elm)(parentScope);
@@ -123,8 +127,7 @@ describe("tests for the cigar shops directives", function() {
             dirScope = elm.isolateScope();
             dirScope.saveEdits();
             
-            expect(dirScope.shop.location.coordinates[0]).toEqual(7.77);
-            expect(dirScope.shop.location.coordinates[1]).toEqual(1.11);
+            expect(getServerShopSpy).toHaveBeenCalled();
             parentScope.$digest();
             expect(dirScope.shop.beingEdited).toEqual(false);
             expect(elm.find('div div').first().text()).toEqual('Test shop');
@@ -146,6 +149,14 @@ describe("tests for the cigar shops directives", function() {
             
             saveAndGetResults = {};
             saveAndGetSpy.and.returnValue($q.when(saveAndGetResults));
+            
+            getClientShopSpy.and.returnValue({'name': 'shop converted to client format',
+                                              'location': {'lat': 1, 'long': 2},
+                                              'id': 'test_id',
+                                              'owner': 'test_owner',
+                                              'resource_uri': 'test_resource_uri',
+                                              'editable': true,
+                                              'beingEdited': false});
         });
         
         it("fills out the dtCigarShops template when no cigar shops are returned", function() {
@@ -161,22 +172,22 @@ describe("tests for the cigar shops directives", function() {
         });
         
         it("fills out the dtCigarShops template when cigar shops are returned", function() {
-            returnedCigarShops.push({'id': 'a',
-                                     'name': 'Test shop for directive',
-                                     'owner': '/api/v1/auth/user/1/',
-                                     "location": {"coordinates": [-75.130205, 37.067922], "type": "Point"}});
+            returnedCigarShops.push({'I': 'will be converted to a client format shop'});
             $compile(elm)(parentScope);
             parentScope.$digest();
             dirScope = elm.isolateScope();
+            
+            expect(cigarShopSpy.get).toHaveBeenCalled();
+            expect(getClientShopSpy).toHaveBeenCalledWith({'I': 'will be converted to a client format shop'});
             expect(elm.find('span').first().text()).toEqual('Create a new cigarshop:');
             expect(elm.find('span').last().text()).toEqual('Here are your existing cigar shops:');
             expect(elm.find('div div button').last().text()).toEqual('Delete');
             expect(elm.find('dt-cigar-shop').size()).toEqual(2);
             expect(elm.find('dt-cigar-shop').last().find('button').text()).toEqual('Update');
-            expect(dirScope.shops.a.beingEdited).toEqual(false);
-            expect(dirScope.shops.a.editable).toEqual(true);
-            expect(dirScope.shops.a.location.lat).toEqual(37.067922);
-            expect(dirScope.shops.a.location.long).toEqual(-75.130205);
+            expect(dirScope.shops.test_id.beingEdited).toEqual(false);
+            expect(dirScope.shops.test_id.editable).toEqual(true);
+            expect(dirScope.shops.test_id.location.lat).toEqual(1);
+            expect(dirScope.shops.test_id.location.long).toEqual(2);
         });
         
         it("invokes the saveShop method and updates on success", function() {
@@ -185,21 +196,21 @@ describe("tests for the cigar shops directives", function() {
             dirScope = elm.isolateScope();
             expect(elm.find('dt-cigar-shop').size()).toEqual(1);
             
-            saveAndGetResults.data = {};
-            saveAndGetResults.data.id = 'testid';
-            saveAndGetResults.data.name = 'freshly saved shop';
-            saveAndGetResults.data.location = {"coordinates": [-75.111111, 37.222222], "type": "Point"};
+            saveAndGetResults.data = {'I': 'will be converted to client format shop'};
             dirScope.shopToSave.name = 'i will get reset';
             dirScope.saveShop();
+            expect(getServerShopSpy).toHaveBeenCalled();
+            
             parentScope.$digest();
+            expect(getClientShopSpy).toHaveBeenCalledWith({'I': 'will be converted to client format shop'});
             expect(elm.find('dt-cigar-shop').size()).toEqual(2);
-            expect(elm.find('dt-cigar-shop').last().find('div div').first().text()).toEqual('freshly saved shop');
+            expect(elm.find('dt-cigar-shop').last().find('div div').first().text()).toEqual('shop converted to client format');
             expect(dirScope.shopToSave.name).toEqual('');
-            expect(dirScope.shops.testid.name).toEqual('freshly saved shop');
-            expect(dirScope.shops.testid.beingEdited).toEqual(false);
-            expect(dirScope.shops.testid.editable).toEqual(true);
-            expect(dirScope.shops.testid.location.lat).toEqual(37.222222);
-            expect(dirScope.shops.testid.location.long).toEqual(-75.111111);
+            expect(dirScope.shops.test_id.name).toEqual('shop converted to client format');
+            expect(dirScope.shops.test_id.beingEdited).toEqual(false);
+            expect(dirScope.shops.test_id.editable).toEqual(true);
+            expect(dirScope.shops.test_id.location.lat).toEqual(1);
+            expect(dirScope.shops.test_id.location.long).toEqual(2);
         });
         
         it("invokes the removeShop method and updates on success", function() {
