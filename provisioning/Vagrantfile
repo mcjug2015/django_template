@@ -12,7 +12,9 @@ Vagrant.configure(2) do |config|
                         puppet module install puppetlabs-stdlib;"
     end
     config.vm.provision "puppet" do |puppet|
-       #puppet.options = "--verbose --debug"
+        puppet.options = "--verbose --debug"
+        puppet.environment_path = "environments"
+        puppet.environment = "default"
     end
     config.vm.provider "virtualbox" do |v|
       v.memory = 4096

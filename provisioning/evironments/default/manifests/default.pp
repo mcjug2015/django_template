@@ -17,7 +17,9 @@ class create_groups_users_dirs {
         uid        => "1002",
         membership => minimum,
         require    => Group["dtowners"],
+        groups     => ["1003"],
         home       => $dt_user_home,
         managehome => true,
     }
 }
+include create_groups_users_dirs
