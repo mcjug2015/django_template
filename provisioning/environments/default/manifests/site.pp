@@ -1,5 +1,14 @@
-$dt_user_home = "/home/dtuser/"
-$dt_sudo_home = "/home/dtsudo/"
+$project_name = "django_template"
+$project_path = "/opt/$project_name"
+$project_path_code = "$project_path/code/"
+$project_path_static = "$project_path/static/"
+$logs_path = "/var/log/$project_name"
+$logs_path_test = "$logs_path/test/"
+$project_username = "dtuser"
+$project_sudo_username = "dtsudo"
+$project_common_groupname = "dtowners"
+$project_userhome = "/home/$project_username/"
+$project_sudo_userhome = "/home/$project_sudo_username/"
 
 
 class { 'sudo':
@@ -16,19 +25,19 @@ class privileges {
 include privileges
 
 
-class create_groups_users_dirs {
+class create_groups_users {
     
-    group { "dtuser":
+    group { $project_username:
         ensure => present,
         gid    => 1002
     }
 
-    group { "dtowners":
+    group { $project_common_groupname:
         ensure => present,
         gid    => 1003
     }
 
-    group { "dtsudo":
+    group { $project_sudo_username:
         ensure => present,
         gid    => 1004
     }
@@ -38,26 +47,92 @@ class create_groups_users_dirs {
         gid    => 1005
     }
 
-    user { "dtuser":
+    user { $project_username:
         ensure     => present,
         gid        => "1002",
         uid        => "1002",
         membership => minimum,
-        require    => [Group["dtowners"], Group["dtuser"]],
-        groups     => ["dtowners"],
-        home       => $dt_user_home,
+        require    => [Group[$project_common_groupname], Group[$project_username]],
+        groups     => [$project_common_groupname],
+        home       => $project_userhome,
         managehome => true,
     }
     
-    user { "dtsudo":
+    user { $project_sudo_username:
         ensure     => present,
         gid        => "1004",
         uid        => "1004",
         membership => minimum,
-        require    => [Group["dtowners"], Group["dtsudo"], Group["admins"], Class["privileges"]],
-        groups     => ["dtowners", "admins"],
-        home       => $dt_sudo_home,
+        require    => [Group[$project_common_groupname], Group[$project_sudo_username],
+                       Group["admins"], Class["privileges"]],
+        groups     => [$project_common_groupname, "admins"],
+        home       => $project_sudo_userhome,
         managehome => true,
     }
 }
-include create_groups_users_dirs
+include create_groups_users
+
+
+class create_dirs {
+
+    file { $project_path:
+        ensure  => 'directory',
+        owner   => $project_username,
+        group   => $project_common_groupname,
+        mode    => '0775',
+        require => [User[$project_username], Group[$project_common_groupname]]
+    }
+    
+    $other_dirs = [$project_path_code, $logs_path]
+    file { $other_dirs:
+        ensure  => 'directory',
+        owner   => $project_username,
+        group   => $project_common_groupname,
+        mode    => '0775',
+        require => [User[$project_username], Group[$project_common_groupname]]
+    }
+    
+    file { $logs_path_test:
+        ensure  => 'directory',
+        owner   => $project_username,
+        group   => $project_common_groupname,
+        mode    => '0775',
+        require => [User[$project_username], Group[$project_common_groupname],
+                    File[$logs_path]]
+    }
+}
+include create_dirs
+
+
+class install_lib_deps {
+
+    $project_libs = ["git"]
+    package { $project_libs:
+        ensure => latest,
+    }
+
+}
+include install_lib_deps
+
+
+class clone_project {
+
+    vcsrepo { $project_path_code:
+        ensure   => present,
+        provider => git,
+        source   => 'git://github.com/mcjug2015/django_template.git',
+        require  => [File[$project_path_code], Package["git"]]
+    }
+
+    file { $project_path_static:
+        ensure  => 'directory',
+        owner   => $project_username,
+        group   => $project_common_groupname,
+        mode    => '0775',
+        require => [User[$project_username], Group[$project_common_groupname],
+                    Vcsrepo[$project_path_code], File[$project_path]],
+        source  => "file://$project_path_code/template_app/static",
+        recurse => true,
+    }
+}
+include clone_project
