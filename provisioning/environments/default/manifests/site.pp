@@ -1,14 +1,16 @@
 $project_name = "django_template"
 $project_path = "/opt/$project_name"
-$project_path_code = "$project_path/code/"
-$project_path_static = "$project_path/static/"
+$project_path_code = "$project_path/code"
+$project_path_static = "$project_path/static"
+$project_venv_path = "$project_path/venv"
+$project_pip_reqs_path = "$project_path_code/dependencies/prod.txt"
 $logs_path = "/var/log/$project_name"
-$logs_path_test = "$logs_path/test/"
+$logs_path_test = "$logs_path/test"
 $project_username = "dtuser"
 $project_sudo_username = "dtsudo"
 $project_common_groupname = "dtowners"
-$project_userhome = "/home/$project_username/"
-$project_sudo_userhome = "/home/$project_sudo_username/"
+$project_userhome = "/home/$project_username"
+$project_sudo_userhome = "/home/$project_sudo_username"
 
 
 class { 'sudo':
@@ -106,7 +108,7 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git"]
+    $project_libs = ["git", "postgresql-devel"]
     package { $project_libs:
         ensure => latest,
     }
@@ -121,7 +123,9 @@ class clone_project {
         ensure   => present,
         provider => git,
         source   => 'git://github.com/mcjug2015/django_template.git',
-        require  => [File[$project_path_code], Package["git"]]
+        require  => [File[$project_path_code], Package["git"]],
+        owner   => $project_username,
+        group   => $project_common_groupname,
     }
 
     file { $project_path_static:
@@ -136,3 +140,37 @@ class clone_project {
     }
 }
 include clone_project
+
+
+class { 'nginx': }
+class setup_nginx {
+
+    nginx::resource::vhost { 'localhost':
+        www_root => $project_path_static,
+    }
+
+}
+include setup_nginx
+
+
+class { 'python' :
+    version    => 'system',
+    pip        => 'latest',
+    dev        => 'present',
+    virtualenv => 'latest',
+    gunicorn   => 'absent',
+}
+
+
+python::virtualenv { $project_venv_path:
+    ensure       => present,
+    version      => 'system',
+    systempkgs   => true,
+    distribute   => false,
+    venv_dir     => $project_venv_path,
+    owner        => $project_username,
+    group        => $project_common_groupname,
+    requirements => $project_pip_reqs_path,
+    timeout      => 1800,
+    require      => [Vcsrepo[$project_path_code], Package["postgresql-devel"]]
+}
