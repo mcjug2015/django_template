@@ -1,4 +1,5 @@
 $project_name = "django_template"
+
 $project_path = "/opt/$project_name"
 $project_path_code = "$project_path/code"
 $project_path_static = "$project_path/static"
@@ -6,11 +7,16 @@ $project_venv_path = "$project_path/venv"
 $project_pip_reqs_path = "$project_path_code/dependencies/prod.txt"
 $logs_path = "/var/log/$project_name"
 $logs_path_test = "$logs_path/test"
+
 $project_username = "dtuser"
 $project_sudo_username = "dtsudo"
 $project_common_groupname = "dtowners"
 $project_userhome = "/home/$project_username"
 $project_sudo_userhome = "/home/$project_sudo_username"
+
+$db_name = "dtdb"
+$db_username = "dtdb_user"
+$db_password = "dtdb_password"
 
 
 class { 'sudo':
@@ -174,3 +180,25 @@ python::virtualenv { $project_venv_path:
     timeout      => 1800,
     require      => [Vcsrepo[$project_path_code], Package["postgresql-devel"]]
 }
+
+
+class { 'postgresql::server': }
+class setup_db {
+
+    postgresql::server::role { 'dtdb_user':
+        password_hash => postgresql_password('dtdb_user', 'dtdb_password'),
+        superuser     => true
+    }
+
+    postgresql::server::db { "dtdb":
+        user     => "dtdb_user",
+        password => postgresql_password("dtdb_user", "dtdb_password"),
+    }
+
+    postgresql::server::database_grant { 'give_bits':
+        privilege => 'ALL',
+        db        => "dtdb",
+        role      => "dtdb_user",
+    }
+}
+include setup_db
