@@ -19,6 +19,10 @@ $db_username = "dtdb_user"
 $db_password = "dtdb_password"
 
 
+include epel
+include repoforge
+
+
 class { 'sudo':
     purge               => false,
     config_file_replace => false,
@@ -114,9 +118,9 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "postgresql-devel"]
+    $project_libs = ["git"]
     package { $project_libs:
-        ensure => latest,
+        ensure   => latest,
     }
 
 }
@@ -178,10 +182,17 @@ python::virtualenv { $project_venv_path:
     group        => $project_common_groupname,
     requirements => $project_pip_reqs_path,
     timeout      => 1800,
-    require      => [Vcsrepo[$project_path_code], Package["postgresql-devel"]]
+    require      => [Vcsrepo[$project_path_code], Class["postgresql::lib::devel"]]
 }
 
 
+class {'postgresql::globals':
+  version => '9.5',
+  manage_package_repo => true,
+  encoding => 'UTF8',
+  locale   => "en_US.UTF-8",
+}
+class { 'postgresql::lib::devel':}
 class { 'postgresql::server': }
 class setup_db {
 
@@ -199,6 +210,20 @@ class setup_db {
         privilege => 'ALL',
         db        => "dtdb",
         role      => "dtdb_user",
+    }
+    
+    exec {"install postgis2":
+        command => "/bin/yum -y install postgis2_95",
+        group   => "root",
+        user    => "root", 
+        require => [Class["repoforge"], Class["epel"], Postgresql::Server::Db["dtdb"]],
+    }
+    
+    exec {"install postgis extensions":
+        command => "/usr/bin/psql dtdb -c \"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\"",
+        group   => "postgres",
+        user    => "postgres",  
+        require => [Exec["install postgis2"]],
     }
 }
 include setup_db
