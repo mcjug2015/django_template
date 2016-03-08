@@ -118,7 +118,7 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git"]
+    $project_libs = ["git", "nano"]
     package { $project_libs:
         ensure   => latest,
     }
@@ -187,43 +187,47 @@ python::virtualenv { $project_venv_path:
 
 
 class {'postgresql::globals':
-  version => '9.5',
-  manage_package_repo => true,
-  encoding => 'UTF8',
-  locale   => "en_US.UTF-8",
+    version => '9.5',
+    manage_package_repo => true,
+    encoding => 'UTF8',
+    locale   => "en_US.UTF-8",
+}->
+class { 'postgresql::server':
+    listen_addresses => '*',
 }
 class { 'postgresql::lib::devel':}
-class { 'postgresql::server': }
 class setup_db {
 
-    postgresql::server::role { 'dtdb_user':
-        password_hash => postgresql_password('dtdb_user', 'dtdb_password'),
+    postgresql::server::role { $db_username:
+        password_hash => postgresql_password($db_username, $db_password),
         superuser     => true
     }
 
-    postgresql::server::db { "dtdb":
-        user     => "dtdb_user",
-        password => postgresql_password("dtdb_user", "dtdb_password"),
+    postgresql::server::db { $db_name:
+        user     => $db_username,
+        password => postgresql_password($db_username, $db_password),
     }
 
     postgresql::server::database_grant { 'give_bits':
         privilege => 'ALL',
-        db        => "dtdb",
-        role      => "dtdb_user",
+        db        => $db_name,
+        role      => $db_username,
     }
     
     exec {"install postgis2":
         command => "/bin/yum -y install postgis2_95",
         group   => "root",
-        user    => "root", 
-        require => [Class["repoforge"], Class["epel"], Postgresql::Server::Db["dtdb"]],
+        user    => "root",
+        creates => "/usr/pgsql-9.5/share/extension/postgis.control",
+        require => [Class["repoforge"], Class["epel"], Postgresql::Server::Db[$db_name]],
     }
     
     exec {"install postgis extensions":
-        command => "/usr/bin/psql dtdb -c \"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\"",
+        command => "/usr/bin/psql $db_name -c \"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\"",
         group   => "postgres",
-        user    => "postgres",  
+        user    => "postgres",
         require => [Exec["install postgis2"]],
+        unless => "/usr/bin/psql -d $db_name -c '\\dx' | grep postgis",
     }
 }
 include setup_db
