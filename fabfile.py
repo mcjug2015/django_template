@@ -49,13 +49,13 @@ def copy_settings():
 
 def install_prod_deps():
     _ensure_virtualenv()
-    local('pip install -q -r %(path)s/dependencies/prod.txt' % env)
+    local('pip install -q -r dependencies/prod.txt' % env)
 
 
 def install_all_deps():
     _ensure_virtualenv()
     install_prod_deps()
-    local('pip install -q -r %(path)s/dependencies/dev.txt' % env)
+    local('pip install -q -r dependencies/dev.txt' % env)
     with lcd('template_app/front_end_qc'):
         local('npm install')
 
