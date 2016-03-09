@@ -73,15 +73,15 @@ def pep8():
 
 
 def run_tests():
+    require('instance')
     _ensure_virtualenv()
-    unit_test()
     copy_settings()
     local('coverage run manage.py test --noinput --with-coverage --cover-package=template_app --cover-min-percentage=86 --cover-html --cover-html-dir=reports/coverage --cover-xml --cover-xml-file=reports/coverage.xml --cover-branches --exclude-dir=template_app/tests/py_integration')
 
 
 def run_integration_tests():
+    require('instance')
     _ensure_virtualenv()
-    unit_test()
     copy_settings()
     local('python manage.py test template_app.tests.py_integration --noinput')
 
@@ -105,6 +105,7 @@ def jasmine_stay_on():
 
 
 def precommit():
+    require('instance')
     _ensure_virtualenv()
     install_all_deps()
     local('rm -rf reports')
