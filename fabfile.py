@@ -27,6 +27,14 @@ def unit_test():
     env.instance = 'unit_test'
 
 
+def vagrant():
+    env.instance = 'vagrant'
+
+
+def vagrant_test():
+    env.instance = 'vagrant_test'
+
+
 def _ensure_virtualenv():
     if "VIRTUAL_ENV" not in os.environ:
         sys.stderr.write("$VIRTUAL_ENV not found. Make sure to activate virtualenv first\n\n")
