@@ -118,7 +118,7 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano"]
+    $project_libs = ["git", "nano", "gcc-c++"]
     package { $project_libs:
         ensure   => latest,
     }
@@ -231,3 +231,39 @@ class setup_db {
     }
 }
 include setup_db
+
+
+class final_setup {
+    
+    exec {"install node":
+        command => "bash -c \"source $project_venv_path/bin/activate;fab one_time_node_install;\"",
+        group   => $project_common_groupname,
+        user    => $project_username,
+        require => [Package["gcc-c++"], Python::Virtualenv[$project_venv_path],
+                    Vcsrepo[$project_path_code]],
+        unless  => "bash -c \"test -d $project_venv_path/lib/node_modules/npm\"",
+        timeout => 1800,
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => $project_path_code,
+    }
+    
+    exec {"install pip and node deps":
+        command => "bash -c \"source $project_venv_path/bin/activate;fab install_all_deps;\"",
+        group   => $project_common_groupname,
+        user    => $project_username,
+        require => [Exec["install node"]],
+        timeout => 600,
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => $project_path_code,
+    }
+    
+    exec {"invoke tests":
+        command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant_test run_tests;fab vagrant_test run_integration_tests\"",
+        group   => $project_common_groupname,
+        user    => $project_username,
+        require => [Exec["install pip and node deps"], Exec["install postgis extensions"]],
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => $project_path_code,
+    }
+}
+include final_setup
