@@ -40,7 +40,7 @@ module.exports = function(config) {
     },
 
     ngHtml2JsPreprocessor: {
-        stripPrefix: '/opt/django_template/template_app',
+        stripPrefix: '/opt/django_template/code/template_app',
         moduleName: 'test_html_js'
     },
     
