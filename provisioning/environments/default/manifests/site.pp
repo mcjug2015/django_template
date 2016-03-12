@@ -118,7 +118,7 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano", "gcc-c++"]
+    $project_libs = ["git", "nano", "gcc-c++", "net-tools"]
     package { $project_libs:
         ensure   => latest,
     }
