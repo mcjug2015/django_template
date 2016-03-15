@@ -137,30 +137,11 @@ class clone_project {
         owner   => $project_username,
         group   => $project_common_groupname,
     }
-
-    file { $project_path_static:
-        ensure  => 'directory',
-        owner   => $project_username,
-        group   => $project_common_groupname,
-        mode    => '0775',
-        require => [User[$project_username], Group[$project_common_groupname],
-                    Vcsrepo[$project_path_code], File[$project_path]],
-        source  => "file://$project_path_code/template_app/static",
-        recurse => true,
-    }
 }
 include clone_project
 
 
 class { 'nginx': }
-class setup_nginx {
-
-    nginx::resource::vhost { 'localhost':
-        www_root => $project_path_static,
-    }
-
-}
-include setup_nginx
 
 
 class { 'python' :

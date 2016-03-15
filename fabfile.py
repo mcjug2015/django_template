@@ -116,3 +116,21 @@ def precommit():
     run_tests()
     run_integration_tests()
     jasmine()
+
+
+def update_ngnix_conf():
+    require('instance')
+    local('sudo cp django_template/environments/%(instance)s/ngnix_conf/dt.conf /etc/nginx/sites-available/' % env)
+    local('sudo ln -s /etc/nginx/sites-available/dt.conf /etc/nginx/sites-enabled/dt.conf')
+
+
+def refresh_local():
+    require('instance')
+    _ensure_virtualenv()
+    install_all_deps()
+    copy_settings()
+    local('python manage.py migrate')
+
+
+def sudo_refresh_local():
+    update_ngnix_conf()
