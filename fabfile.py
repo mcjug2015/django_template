@@ -2,6 +2,7 @@
 from fabric.api import env, local, sudo, require, run, put, settings, cd, lcd
 import os
 import sys
+from fabric.context_managers import warn_only
 
 
 env.prj_name = 'django_template'
@@ -121,7 +122,15 @@ def precommit():
 def update_ngnix_conf():
     require('instance')
     local('sudo cp django_template/environments/%(instance)s/ngnix_conf/dt.conf /etc/nginx/sites-available/' % env)
+    local('sudo rm -rf /etc/nginx/sites-enabled/dt.conf')
     local('sudo ln -s /etc/nginx/sites-available/dt.conf /etc/nginx/sites-enabled/dt.conf')
+
+
+def update_static_files():
+    local('rm -rf /opt/django_template/static/template_app')
+    local('mkdir -p /opt/django_template/static/template_app')
+    local('cp -r template_app/static/js /opt/django_template/static/template_app')
+    local('cp -r template_app/static/html /opt/django_template/static/template_app')
 
 
 def refresh_local():
@@ -130,7 +139,15 @@ def refresh_local():
     install_all_deps()
     copy_settings()
     local('python manage.py migrate --noinput')
+    update_static_files()
+
+
+def reboot_all():
+    with settings(warn_only=True):
+        local('sudo systemctl stop nginx')
+    local('sudo systemctl start nginx')
 
 
 def sudo_refresh_local():
     update_ngnix_conf()
+    reboot_all()
