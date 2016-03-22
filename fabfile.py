@@ -129,7 +129,7 @@ def refresh_local():
     _ensure_virtualenv()
     install_all_deps()
     copy_settings()
-    local('python manage.py migrate')
+    local('python manage.py migrate --noinput')
 
 
 def sudo_refresh_local():
