@@ -48,6 +48,11 @@ def copy_settings():
     local('cp django_template/environments/%(instance)s/settings/%(instance)s.py django_template/settings.py' % env)
 
 
+def copy_uwsgi_params():
+    require('instance')
+    local('cp django_template/environments/%(instance)s/uwsgi_conf/uwsgi_params django_template/uwsgi_params' % env)
+
+
 def install_prod_deps():
     _ensure_virtualenv()
     local('pip install -q -r dependencies/prod.txt' % env)
@@ -77,14 +82,14 @@ def run_tests():
     require('instance')
     _ensure_virtualenv()
     copy_settings()
-    local('coverage run manage.py test --noinput --with-coverage --cover-package=template_app --cover-min-percentage=86 --cover-html --cover-html-dir=reports/coverage --cover-xml --cover-xml-file=reports/coverage.xml --cover-branches --exclude-dir=template_app/tests/py_integration')
+    local('coverage run manage.py test --noinput --with-coverage --cover-package=template_app --cover-min-percentage=86 --cover-html --cover-html-dir=reports/coverage --cover-xml --cover-xml-file=reports/coverage.xml --cover-branches --exclude-dir=template_app/tests/py_integration --exe')
 
 
 def run_integration_tests():
     require('instance')
     _ensure_virtualenv()
     copy_settings()
-    local('python manage.py test template_app.tests.py_integration --noinput')
+    local('python manage.py test template_app.tests.py_integration --noinput --exe')
 
 
 def jshint():
@@ -138,6 +143,7 @@ def refresh_local():
     _ensure_virtualenv()
     install_all_deps()
     copy_settings()
+    copy_uwsgi_params()
     local('python manage.py migrate --noinput')
     update_static_files()
 
