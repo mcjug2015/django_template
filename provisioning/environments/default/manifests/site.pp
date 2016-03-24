@@ -64,8 +64,8 @@ class create_groups_users {
         gid        => "1002",
         uid        => "1002",
         membership => minimum,
-        require    => [Group[$project_common_groupname], Group[$project_username]],
-        groups     => [$project_common_groupname],
+        require    => [Group[$project_common_groupname], Group[$project_username], Class["nginx"]],
+        groups     => [$project_common_groupname, "nginx"],
         home       => $project_userhome,
         managehome => true,
     }
@@ -76,8 +76,8 @@ class create_groups_users {
         uid        => "1004",
         membership => minimum,
         require    => [Group[$project_common_groupname], Group[$project_sudo_username],
-                       Group["admins"], Class["privileges"]],
-        groups     => [$project_common_groupname, "admins"],
+                       Group["admins"], Class["privileges"], Class["nginx"]],
+        groups     => [$project_common_groupname, "admins", "nginx"],
         home       => $project_sudo_userhome,
         managehome => true,
     }
@@ -233,6 +233,24 @@ class final_setup {
         group   => $project_common_groupname,
         user    => $project_username,
         require => [Exec["install postgis extensions"], Exec["install node"]],
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => $project_path_code,
+    }
+    
+    exec {"do refresh":
+        command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant refresh_local\"",
+        group   => $project_common_groupname,
+        user    => $project_username,
+        require => [Exec["invoke tests"]],
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => $project_path_code,
+    }
+    
+    exec {"do sudo_refresh":
+        command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant sudo_refresh_local\"",
+        group   => $project_common_groupname,
+        user    => $project_sudo_username,
+        require => [Exec["do refresh"]],
         path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
         cwd     => $project_path_code,
     }

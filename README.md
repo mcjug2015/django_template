@@ -19,5 +19,5 @@ Example run_list invocation
 python manage.py run_list '/home/dtuser/Desktop/latest_meetings.txt' '/opt/django_template/code/reports/load_meetings_err.txt' '/opt/django_template/code/reports/load_meetings_err_detail.txt'
 
 
-uwsgi/ngnix stuff - after sudo_refresh_local do "uwsgi --socket :8000 --module django_template.wsgi" for uwsgi to start
+uwsgi/ngnix stuff - after sudo_refresh_local do "uwsgi --ini django_template/uwsgi.ini" for uwsgi to start
 chooching. will demonize soon.

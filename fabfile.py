@@ -53,6 +53,11 @@ def copy_uwsgi_params():
     local('cp django_template/environments/%(instance)s/uwsgi_conf/uwsgi_params django_template/uwsgi_params' % env)
 
 
+def copy_uwsgi_ini():
+    require('instance')
+    local('cp django_template/environments/%(instance)s/uwsgi_conf/uwsgi.ini django_template/uwsgi.ini' % env)
+
+
 def install_prod_deps():
     _ensure_virtualenv()
     local('pip install -q -r dependencies/prod.txt' % env)
@@ -134,8 +139,8 @@ def update_ngnix_conf():
 def update_static_files():
     local('rm -rf /opt/django_template/static/template_app')
     local('mkdir -p /opt/django_template/static/template_app')
-    local('cp -r template_app/static/js /opt/django_template/static/template_app')
-    local('cp -r template_app/static/html /opt/django_template/static/template_app')
+    local('cp -r template_app/static/js /opt/django_template/static/')
+    local('cp -r template_app/static/html /opt/django_template/static/')
 
 
 def refresh_local():
@@ -144,6 +149,7 @@ def refresh_local():
     install_all_deps()
     copy_settings()
     copy_uwsgi_params()
+    copy_uwsgi_ini()
     local('python manage.py migrate --noinput')
     update_static_files()
 
@@ -154,6 +160,13 @@ def reboot_all():
     local('sudo systemctl start nginx')
 
 
+def ensure_socket():
+    local("sudo rm -rf /var/run/django_template/")
+    local("sudo mkdir -p /var/run/django_template/")
+    local("sudo chown -R dtuser:dtowners /var/run/django_template/")
+
+
 def sudo_refresh_local():
     update_ngnix_conf()
+    ensure_socket()
     reboot_all()
