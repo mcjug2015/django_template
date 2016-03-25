@@ -118,7 +118,7 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano", "gcc-c++", "net-tools"]
+    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "uwsgi", "uwsgi-plugin-python"]
     package { $project_libs:
         ensure   => latest,
     }
@@ -214,6 +214,12 @@ class setup_db {
 include setup_db
 
 
+class { "selinux":
+    mode => "permissive",
+    type => "targeted",
+}
+
+
 class final_setup {
     
     exec {"install node":
@@ -241,7 +247,7 @@ class final_setup {
         command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant refresh_local\"",
         group   => $project_common_groupname,
         user    => $project_username,
-        require => [Exec["invoke tests"]],
+        require => [Exec["invoke tests"], Class["selinux"]],
         path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
         cwd     => $project_path_code,
     }
@@ -250,7 +256,7 @@ class final_setup {
         command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant sudo_refresh_local\"",
         group   => $project_common_groupname,
         user    => $project_sudo_username,
-        require => [Exec["do refresh"]],
+        require => [Exec["do refresh"], ],
         path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
         cwd     => $project_path_code,
     }
