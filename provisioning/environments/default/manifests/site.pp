@@ -118,11 +118,16 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "uwsgi", "uwsgi-plugin-python"]
+    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "epel-release"]
     package { $project_libs:
         ensure   => latest,
     }
 
+	$secondary_libs = ["uwsgi", "uwsgi-plugin-python"]
+	package { $secondary_libs:
+        ensure   => latest,
+        require  => [Package["epel-release"]]
+    }
 }
 include install_lib_deps
 
