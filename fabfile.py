@@ -186,3 +186,10 @@ def sudo_refresh_local():
     put_root_uwsgi_ini()
     put_uwsgi_systemd_file()
     reboot_all()
+
+
+def sudo_reset_db():
+    local('''sudo su - postgres -c "/usr/bin/psql -c \"SELECT pg_terminate_backend(pid) FROM  pg_stat_activity WHERE datname = 'dtdb';\""''')
+    local('''sudo su - postgres -c "/usr/bin/dropdb dtdb"''')
+    local('''sudo su - postgres -c "/usr/bin/createdb dtdb"''')
+    local('''sudo su - postgres -c "/usr/bin/psql dtdb -c \"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\""''')
