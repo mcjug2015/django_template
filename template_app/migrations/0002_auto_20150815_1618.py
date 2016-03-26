@@ -3,15 +3,16 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 def forwards_func(apps, schema_editor):
     ''' add an admin user '''
     user = User(pk=1, username="admin", is_active=True,
                 is_superuser=True, is_staff=True,
-                last_login="2011-09-01T13:20:30+03:00",
+                last_login=timezone.now(),
                 email="test@test.com",
-                date_joined="2011-09-01T13:20:30+03:00")
+                date_joined=timezone.now())
     user.set_password('admin')
     user.save()
 
