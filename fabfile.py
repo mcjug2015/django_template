@@ -193,3 +193,23 @@ def sudo_reset_db():
     local('''sudo su - postgres -c "/usr/bin/dropdb dtdb"''')
     local('''sudo su - postgres -c "/usr/bin/createdb dtdb"''')
     local('''sudo su - postgres -c "/usr/bin/psql dtdb -c \\"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\\""''')
+
+
+def ensure_xvfb():
+    local("sudo cp conf/xvfb.service /usr/lib/systemd/system/xvfb.service")
+    local("sudo systemctl enable xvfb")
+    local("sudo systemctl daemon-reload")
+
+
+def ensure_selenium():
+    local("sudo mkdir -p /opt/selenium-server/")
+    local("sudo chown -R dtuser:dtowners /opt/selenium-server/")
+    local('''[ -f /opt/selenium-server/selenium-server.jar ] && echo "found selenium jar" || wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar -O /opt/selenium-server/selenium-server.jar''')
+    local("sudo cp conf/selenium-server.service /usr/lib/systemd/system/selenium-server.service")
+    local("sudo systemctl enable selenium-server")
+    local("sudo systemctl daemon-reload")
+
+
+def sudo_prepare_for_selenium():
+    ensure_xvfb()
+    ensure_selenium()

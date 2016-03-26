@@ -1,0 +1,9 @@
+[Unit]
+Description=Selenium Server Service
+After=network.target
+
+[Service] 
+ExecStart=/usr/bin/java -jar /opt/selenium-server/selenium-server.jar
+
+[Install]
+WantedBy=multi-user.target
