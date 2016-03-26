@@ -136,6 +136,7 @@ def update_static_files():
     local('mkdir -p /opt/django_template/static/template_app')
     local('cp -r template_app/static/js /opt/django_template/static/')
     local('cp -r template_app/static/html /opt/django_template/static/')
+    local('cp -r /opt/django_template/venv/lib/python2.7/site-packages/django/contrib/admin/static/admin /opt/django_template/static/')
 
 
 def refresh_local():
@@ -174,6 +175,7 @@ def put_root_uwsgi_ini():
 
 def put_uwsgi_systemd_file():
     local("sudo cp conf/uwsgi.service /usr/lib/systemd/system/uwsgi.service")
+    local("sudo systemctl enable uwsgi")
     local("sudo systemctl daemon-reload")
 
 
