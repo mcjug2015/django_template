@@ -208,8 +208,8 @@ def ensure_xvfb():
 
 def ensure_selenium():
     local("sudo mkdir -p /opt/selenium-server/")
+    local('''[ -f /opt/selenium-server/selenium-server.jar ] && echo "found selenium jar" || sudo wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar -O /opt/selenium-server/selenium-server.jar''')
     local("sudo chown -R dtuser:dtowners /opt/selenium-server/")
-    local('''[ -f /opt/selenium-server/selenium-server.jar ] && echo "found selenium jar" || wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar -O /opt/selenium-server/selenium-server.jar''')
     local("sudo cp conf/selenium-server.service /usr/lib/systemd/system/selenium-server.service")
     local("sudo systemctl enable selenium-server")
     local("sudo systemctl daemon-reload")
