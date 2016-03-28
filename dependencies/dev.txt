@@ -4,3 +4,4 @@ pylint==1.5.1
 nose-exclude==0.4.1
 mockito==0.5.2
 coverage==4.0.3
+selenium==2.53.1

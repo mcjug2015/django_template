@@ -4,20 +4,24 @@ A template django project
 If "vagrant up" fails, try "ulimit -n 4048;vagrant up;". Might start working after that.
 https://github.com/mitchellh/vagrant/issues/2435 and http://stackoverflow.com/questions/18808540/error-when-running-vagrant-up-too-many-open-files-getcwd-errnoemfile have some insight, but not much.
 
-After vagrant up, apply migrations and do python manage.py runserver 192.168.50.4:8000 to get
-a test server accessible from the host going.
 
-Initial creds are admin/admin. http://192.168.50.4:8000/admin/ and http://192.168.50.4:8000/welcome/ can be visited.
+Initial creds are admin/admin. host machine http://192.168.50.4/admin/ and http://192.168.50.4/welcome/ can be visited after vagrant up.
 
 
 To query cigar shops by lat, long, and distance in miles do:
-http://127.0.0.1:8000/api/v1/cigarshop/?lat=37.067922&long=-75.130205&distance=10&format=json
+http://192.168.50.4/api/v1/cigarshop/?lat=37.067922&long=-75.130205&distance=10&format=json
+
 
 Fixture test_user password is testing123
+
 
 Example run_list invocation
 python manage.py run_list '/home/dtuser/Desktop/latest_meetings.txt' '/opt/django_template/code/reports/load_meetings_err.txt' '/opt/django_template/code/reports/load_meetings_err_detail.txt'
 
 
-uwsgi/ngnix stuff - after sudo_refresh_local do "uwsgi --ini django_template/uwsgi.ini" for uwsgi to start
-chooching. will demonize soon.
+Seleniums currently a mess. Invoking selenium tests is slightly clunky since the sudo user is separate from the regular user:
+fab vagrant refresh_local
+fab vagrant_test copy_settings
+fab vagrant sudo_refresh_local
+fab sudo_prepare_for_selenium
+fab run_selenium_tests
