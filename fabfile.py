@@ -215,6 +215,12 @@ def ensure_selenium():
     local("sudo systemctl daemon-reload")
 
 
+def start_selenium_services():
+    local("sudo systemctl start xvfb")
+    local("sudo systemctl start selenium-server")
+
+
 def sudo_prepare_for_selenium():
     ensure_xvfb()
     ensure_selenium()
+    start_selenium_services()
