@@ -15,6 +15,7 @@ $project_userhome = "/home/$project_username"
 $project_sudo_userhome = "/home/$project_sudo_username"
 
 $db_name = "dtdb"
+$db_name_selenium = "dtdb_selenium"
 $db_username = "dtdb_user"
 $db_password = "dtdb_password"
 
@@ -194,9 +195,20 @@ class setup_db {
         password => postgresql_password($db_username, $db_password),
     }
 
+    postgresql::server::db { $db_name_selenium:
+        user     => $db_username,
+        password => postgresql_password($db_username, $db_password),
+    }
+
     postgresql::server::database_grant { 'give_bits':
         privilege => 'ALL',
         db        => $db_name,
+        role      => $db_username,
+    }
+    
+    postgresql::server::database_grant { 'give_bits_selenium':
+        privilege => 'ALL',
+        db        => $db_name_selenium,
         role      => $db_username,
     }
     
@@ -214,6 +226,14 @@ class setup_db {
         user    => "postgres",
         require => [Exec["install postgis2"]],
         unless => "/usr/bin/psql -d $db_name -c '\\dx' | grep postgis",
+    }
+    
+    exec {"install postgis extensions for selenium db":
+        command => "/usr/bin/psql $db_name_selenium -c \"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\"",
+        group   => "postgres",
+        user    => "postgres",
+        require => [Exec["install postgis2"]],
+        unless => "/usr/bin/psql -d $db_name_selenium -c '\\dx' | grep postgis",
     }
 }
 include setup_db
