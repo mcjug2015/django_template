@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django_nose',
     'template_app'
 )
 
@@ -107,7 +108,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'template_app.tests.selenium.nodb_testrunner.NoDbTestRunner'
 
 LOGGING = {
     'version': 1,

@@ -82,7 +82,7 @@ def run_tests():
 
 def run_selenium_tests():
     _ensure_virtualenv()
-    local('python manage.py test --noinput --exe template_app.tests.selenium')
+    local('python manage.py test --noinput template_app.tests.selenium')
 
 
 def run_integration_tests():
