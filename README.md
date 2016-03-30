@@ -20,8 +20,6 @@ python manage.py run_list '/home/dtuser/Desktop/latest_meetings.txt' '/opt/djang
 
 
 Seleniums currently a mess. Invoking selenium tests is slightly clunky since the sudo user is separate from the regular user:
-fab vagrant refresh_local
-fab vagrant_test copy_settings
-fab vagrant sudo_refresh_local
+fab vagrant_selenium refresh_local
 fab sudo_prepare_for_selenium
 fab run_selenium_tests

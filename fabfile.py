@@ -20,12 +20,8 @@ def one_time_node_install():
     local('rm -rf /tmp/node-v*')
 
 
-def local_box():
-    env.instance = 'local_box'
-
-
-def unit_test():
-    env.instance = 'unit_test'
+def vagrant_selenium():
+    env.instance = 'vagrant_selenium'
 
 
 def vagrant():
@@ -221,3 +217,4 @@ def sudo_prepare_for_selenium():
     ensure_xvfb()
     ensure_selenium()
     start_selenium_services()
+    sudo_refresh_local()

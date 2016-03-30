@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'django_template.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'dtdb',
+        'NAME': 'dtdb_selenium',
         'USER': 'dtdb_user',
         'PASSWORD': 'dtdb_password',
         'HOST': '127.0.0.1',
@@ -107,6 +107,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 LOGGING = {
     'version': 1,
@@ -117,14 +118,14 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 25 * 1024 * 1024,
             'backupCount': 5,
-            'filename': '/var/log/django_template/django.log',
+            'filename': '/var/log/django_template/test/django.log',
         },
         'run_list_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 25 * 1024 * 1024,
             'backupCount': 5,
-            'filename': '/var/log/django_template/run_list.log',
+            'filename': '/var/log/django_template/test/run_list.log',
         },
     },
     'loggers': {
@@ -145,4 +146,4 @@ APPEND_SLASH = False
 TASTYPIE_ALLOW_MISSING_SLASH = True
 
 
-INSTANCE_NAME = 'vagrant'
+INSTANCE_NAME = 'vagrant_selenium'
