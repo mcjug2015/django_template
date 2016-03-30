@@ -49,8 +49,7 @@ def copy_settings():
 
 
 def copy_uwsgi_params():
-    require('instance')
-    local('cp django_template/environments/%(instance)s/uwsgi_conf/uwsgi_params django_template/uwsgi_params' % env)
+    local('cp conf/uwsgi_params django_template/uwsgi_params' % env)
 
 
 def install_prod_deps():
@@ -130,8 +129,7 @@ def precommit():
 
 
 def update_ngnix_conf():
-    require('instance')
-    local('sudo cp django_template/environments/%(instance)s/ngnix_conf/dt.conf /etc/nginx/sites-available/' % env)
+    local('sudo cp conf/dt.conf /etc/nginx/sites-available/' % env)
     local('sudo rm -rf /etc/nginx/sites-enabled/dt.conf')
     local('sudo ln -s /etc/nginx/sites-available/dt.conf /etc/nginx/sites-enabled/dt.conf')
 
@@ -155,8 +153,7 @@ def refresh_local():
 
 
 def copy_uwsgi_ini():
-    require('instance')
-    local('sudo cp django_template/environments/%(instance)s/uwsgi_conf/uwsgi.ini /etc/uwsgi.d/dt_uwsgi.ini' % env)
+    local('sudo cp conf/uwsgi.ini /etc/uwsgi.d/dt_uwsgi.ini' % env)
     local('sudo chown dtuser:nginx /etc/uwsgi.d/dt_uwsgi.ini' % env)
 
 
