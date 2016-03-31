@@ -3,9 +3,7 @@ import os
 from django.test.testcases import TestCase
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from template_app.tests.selenium.base.base_pages import WelcomePage
 
 
 class FirstTest(TestCase):
@@ -23,6 +21,7 @@ class FirstTest(TestCase):
 
     def test_first(self):
         ''' verify that selenium tests can happen '''
-        self.driver.get("http://127.0.0.1/welcome/")
-        the_wait = EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'login')]"))
-        WebDriverWait(self.driver, timeout=3).until(the_wait)
+        welcome_page = WelcomePage(self.driver)
+        welcome_page.navigate_and_load()
+        self.assertEquals(welcome_page.login_disclaimer.the_element.text.strip(),
+                          "You must login to use this site")
