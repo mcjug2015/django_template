@@ -46,5 +46,5 @@ Invoke seleniums with:
 ```
 fab vagrant_selenium refresh_local
 fab sudo_prepare_for_selenium
-fab run_selenium_tests
+fab vagrant_selenium run_selenium_tests
 ```

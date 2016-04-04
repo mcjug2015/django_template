@@ -82,7 +82,9 @@ def run_tests():
 
 def run_selenium_tests():
     _ensure_virtualenv()
-    local('python manage.py test --noinput template_app.tests.selenium')
+    require('instance')
+    local('cp django_template/environments/%(instance)s/settings/%(instance)s_code.py django_template/settings.py' % env)
+    local('python manage.py test --noinput --keepdb template_app.tests.selenium')
 
 
 def run_integration_tests():
@@ -108,6 +110,17 @@ def jasmine_stay_on():
     _ensure_virtualenv()
     with lcd('template_app/front_end_qc'):
         local('npm run jasmine_stay_on')
+
+
+def copy_to_served():
+    '''
+        Lets keep the code uwsgi actually runs off separate from our sandbox,
+        cleaner that way. For responsive development use runserver.
+    '''
+    _ensure_virtualenv()
+    local("rm -rf /opt/django_template/served")
+    local("cp -R /opt/django_template/code /opt/django_template/served")
+    local("chown -R dtuser:nginx /opt/django_template/served")
 
 
 def precommit():
@@ -146,6 +159,7 @@ def refresh_local():
     copy_uwsgi_params()
     local('python manage.py migrate --noinput')
     update_static_files()
+    copy_to_served()
 
 
 def copy_uwsgi_ini():
@@ -187,10 +201,10 @@ def sudo_refresh_local():
 
 
 def sudo_reset_db():
-    local('''sudo su - postgres -c "/usr/bin/psql -c \\"SELECT pg_terminate_backend(pid) FROM  pg_stat_activity WHERE datname = 'dtdb';\\""''')
-    local('''sudo su - postgres -c "/usr/bin/dropdb dtdb"''')
-    local('''sudo su - postgres -c "/usr/bin/createdb dtdb"''')
-    local('''sudo su - postgres -c "/usr/bin/psql dtdb -c \\"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\\""''')
+    local('''sudo su - postgres -c "/usr/bin/psql -c \\"SELECT pg_terminate_backend(pid) FROM  pg_stat_activity WHERE datname = 'dtdb_selenium';\\""''')
+    local('''sudo su - postgres -c "/usr/bin/dropdb dtdb_selenium"''')
+    local('''sudo su - postgres -c "/usr/bin/createdb dtdb_selenium"''')
+    local('''sudo su - postgres -c "/usr/bin/psql dtdb_selenium -c \\"CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;\\""''')
 
 
 def ensure_xvfb():

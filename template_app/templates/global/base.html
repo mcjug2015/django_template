@@ -12,8 +12,9 @@
 {% block extra_head %}{% endblock %}
 </head>
 <body>
- <div data-ng-controller="GlobalController">
- {% block content %}{% endblock %}
+    <div data-ng-controller="GlobalController">
+    {% csrf_token %}
+    {% block content %}{% endblock %}
 </div>
 </body>
 </html>
