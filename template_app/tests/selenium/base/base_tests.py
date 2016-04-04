@@ -1,5 +1,5 @@
 ''' base test classes that actual selenium classes can override and make use of '''
-# pylint: disable=E1101
+# pylint: disable=E1101,E0611
 import os
 import string
 import random
