@@ -1,6 +1,7 @@
 ''' module for classes that wrap a single browser page '''
 from template_app.tests.selenium.base.base_selenium import BaseSeleniumObject
-from template_app.tests.selenium.base.base_elements import LoginElement, BaseTextElement
+from template_app.tests.selenium.base.base_elements import LoginElement, BaseTextElement,\
+    NewCigarshopWidget
 
 
 class BasePage(BaseSeleniumObject):
@@ -39,3 +40,10 @@ class WelcomePage(BasePage):
         self.login_element = LoginElement(self.driver)
         self.login_disclaimer = BaseTextElement(self.driver, "//div/div[contains(text(), 'You must login')]")
         self.initial_elements += [self.login_element, self.login_disclaimer]
+
+        self.new_cigarshop_widget = NewCigarshopWidget(self.driver)
+
+    def login_good(self, username, password):
+        ''' succesfully login and fill out widgets that become visible afterwards '''
+        self.login_element.login_good(username, password)
+        self.new_cigarshop_widget.fill()

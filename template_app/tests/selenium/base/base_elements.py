@@ -93,3 +93,26 @@ class LoginElement(BaseElement):
         self.get_child_element(self.username_text_path, "text").fill().set_text(username)
         self.get_child_element(self.password_text_path, "text").fill().set_text(password)
         self.get_child_element(self.login_button_path, "click").fill().click_and_wait(self.the_wait)
+
+
+class NewCigarshopWidget(BaseElement):
+    ''' a widget for creating new cigarshops '''
+
+    def __init__(self, driver):
+        super(NewCigarshopWidget, self).__init__(driver, "//div[button[text()='Create']]")
+        self.name_xpath = "div/input[@data-ng-model = 'shop.name']"
+        self.lat_xpath = "div/div[contains(text(), 'Lat:')]/input[@data-ng-model = 'shop.location.lat']"
+        self.long_xpath = "div/div[contains(text(), 'Long:')]/input[@data-ng-model = 'shop.location.long']"
+        self.create_button_xpath = "button[text()='Create']"
+
+    def create_cigar_shop(self, name, the_lat, the_long):
+        ''' create a new cigar shop with params provided. '''
+        self.get_child_element(self.name_xpath, "text").fill().set_text(name)
+        self.get_child_element(self.lat_xpath, "text").fill().set_text(the_lat)
+        self.get_child_element(self.long_xpath, "text").fill().set_text(the_long)
+
+        new_shop_xpath = "//div[span[contains(text(), 'Here are your existing')]]/"
+        new_shop_xpath += "div[contains(@data-ng-repeat, 'in shops')]//div/div[contains(text(), '%s')]" % name
+        the_wait = EC.visibility_of_element_located((By.XPATH, new_shop_xpath))
+        self.get_child_element(self.create_button_xpath,
+                               "click").fill().click_and_wait(the_wait)
