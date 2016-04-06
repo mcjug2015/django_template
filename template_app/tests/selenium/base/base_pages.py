@@ -1,7 +1,7 @@
 ''' module for classes that wrap a single browser page '''
 from template_app.tests.selenium.base.base_selenium import BaseSeleniumObject
 from template_app.tests.selenium.base.base_elements import LoginElement, BaseTextElement,\
-    NewCigarshopWidget
+    NewCigarshopWidget, ExistingCigarshopWidget
 
 
 class BasePage(BaseSeleniumObject):
@@ -40,10 +40,21 @@ class WelcomePage(BasePage):
         self.login_element = LoginElement(self.driver)
         self.login_disclaimer = BaseTextElement(self.driver, "//div/div[contains(text(), 'You must login')]")
         self.initial_elements += [self.login_element, self.login_disclaimer]
-
         self.new_cigarshop_widget = NewCigarshopWidget(self.driver)
+        self.name_to_existing_shop = {}
 
     def login_good(self, username, password):
         ''' succesfully login and fill out widgets that become visible afterwards '''
         self.login_element.login_good(username, password)
         self.new_cigarshop_widget.fill()
+
+    def create_shop(self, name, the_lat, the_long):
+        ''' create a new cigarshop '''
+        self.new_cigarshop_widget.create_cigar_shop(name, the_lat, the_long)
+        inner_cigarshop_path = "*[@shop = 'curshop']/div/div[@data-ng-bind = 'shop.name' and contains(text(), '%s')]"
+        inner_cigarshop_path = inner_cigarshop_path % name
+        existing_cigarshop_path = "//div[contains(@data-ng-repeat, '(id, curshop) in shops') and %s]"
+        existing_cigarshop_path = existing_cigarshop_path % inner_cigarshop_path
+        existing_cigarshop = ExistingCigarshopWidget(self.driver, existing_cigarshop_path)
+        existing_cigarshop.fill()
+        self.name_to_existing_shop[name] = existing_cigarshop

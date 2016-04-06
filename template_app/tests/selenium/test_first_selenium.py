@@ -14,7 +14,15 @@ class FirstTest(BaseUserSeleniumTest):
                           "You must login to use this site")
         welcome_page.login_good(self.the_user['username'],
                                 self.the_user['password'])
-        welcome_page.new_cigarshop_widget.create_cigar_shop("Selenium created shop",
-                                                            "39.999111", "-77.333444")
-        welcome_page.new_cigarshop_widget.create_cigar_shop("Another Selenium created shop",
-                                                            "38.888888", "-79.111222")
+        welcome_page.create_shop("Selenium created shop",
+                                 "39.999111", "-77.333444")
+        welcome_page.create_shop("Another Selenium created shop",
+                                 "38.888888", "-79.111222")
+        shop1 = welcome_page.name_to_existing_shop["Selenium created shop"]
+        shop2 = welcome_page.name_to_existing_shop["Another Selenium created shop"]
+        self.assertEquals(shop1.get_name(), "Selenium created shop")
+        self.assertEquals(shop1.get_lat(), "39.999111")
+        self.assertEquals(shop1.get_long(), "-77.333444")
+        self.assertEquals(shop2.get_name(), "Another Selenium created shop")
+        self.assertEquals(shop2.get_lat(), "38.888888")
+        self.assertEquals(shop2.get_long(), "-79.111222")

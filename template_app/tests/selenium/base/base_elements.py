@@ -60,7 +60,8 @@ class BaseTextElement(BaseElement):
         return self.the_element.text.strip()
 
     def set_text(self, the_text):
-        ''' set the elements text '''
+        ''' set the elements text, clearing the field beforehand '''
+        self.the_element.clear()
         self.the_element.send_keys(the_text)
 
 
@@ -95,24 +96,96 @@ class LoginElement(BaseElement):
         self.get_child_element(self.login_button_path, "click").fill().click_and_wait(self.the_wait)
 
 
+class EditInProgressCigarshopFieldsWidget(BaseElement):
+    '''
+        Widget that holds the elements of a cigarshop currently being edited.
+        Needs path since there can be many on the page. Can send info to the fields.
+    '''
+
+    def __init__(self, driver, the_path):
+        super(EditInProgressCigarshopFieldsWidget, self).__init__(driver, the_path)
+        self.name_xpath = "input[@data-ng-model = 'shop.name']"
+        self.lat_xpath = "div[contains(text(), 'Lat:')]/input[@data-ng-model = 'shop.location.lat']"
+        self.long_xpath = "div[contains(text(), 'Long:')]/input[@data-ng-model = 'shop.location.long']"
+
+    def send_input(self, name, the_lat, the_long):
+        ''' send input to the fields '''
+        self.get_child_element(self.name_xpath, "text").fill().set_text(name)
+        self.get_child_element(self.lat_xpath, "text").fill().set_text(the_lat)
+        self.get_child_element(self.long_xpath, "text").fill().set_text(the_long)
+
+
 class NewCigarshopWidget(BaseElement):
     ''' a widget for creating new cigarshops '''
 
     def __init__(self, driver):
         super(NewCigarshopWidget, self).__init__(driver, "//div[button[text()='Create']]")
-        self.name_xpath = "div/input[@data-ng-model = 'shop.name']"
-        self.lat_xpath = "div/div[contains(text(), 'Lat:')]/input[@data-ng-model = 'shop.location.lat']"
-        self.long_xpath = "div/div[contains(text(), 'Long:')]/input[@data-ng-model = 'shop.location.long']"
+        editable_fields_cs_path = "%s//div[input[@data-ng-model = 'shop.name']]" % self.the_path
+        self.editable_fields_cs = EditInProgressCigarshopFieldsWidget(self.driver,
+                                                                      editable_fields_cs_path)
         self.create_button_xpath = "button[text()='Create']"
 
     def create_cigar_shop(self, name, the_lat, the_long):
         ''' create a new cigar shop with params provided. '''
-        self.get_child_element(self.name_xpath, "text").fill().set_text(name)
-        self.get_child_element(self.lat_xpath, "text").fill().set_text(the_lat)
-        self.get_child_element(self.long_xpath, "text").fill().set_text(the_long)
-
+        self.editable_fields_cs.fill()
+        self.editable_fields_cs.send_input(name, the_lat, the_long)
         new_shop_xpath = "//div[span[contains(text(), 'Here are your existing')]]/"
         new_shop_xpath += "div[contains(@data-ng-repeat, 'in shops')]//div/div[contains(text(), '%s')]" % name
         the_wait = EC.visibility_of_element_located((By.XPATH, new_shop_xpath))
         self.get_child_element(self.create_button_xpath,
                                "click").fill().click_and_wait(the_wait)
+
+
+class StaticCigarshopFieldsWidget(BaseElement):
+    ''' Widget holding elements of a displayed cigarshop not being edited at the moment '''
+
+    def __init__(self, driver, the_path):
+        super(StaticCigarshopFieldsWidget, self).__init__(driver, the_path)
+        self.name_xpath = "div[@data-ng-bind = 'shop.name']"
+        self.lat_xpath = "div[contains(text(), 'Lat:')]/div[contains(@data-ng-bind, 'shop.location.lat')]"
+        self.long_xpath = "div[contains(text(), 'Long:')]/div[contains(@data-ng-bind, 'shop.location.long')]"
+
+    def get_name(self):
+        ''' get the shop name '''
+        return self.get_child_element(self.name_xpath, "text").fill().get_text()
+
+    def get_lat(self):
+        ''' get the shop latitude '''
+        return self.get_child_element(self.lat_xpath, "text").fill().get_text()
+
+    def get_long(self):
+        ''' get the shop longitude '''
+        return self.get_child_element(self.long_xpath, "text").fill().get_text()
+
+
+class ExistingCigarshopWidget(BaseElement):
+    ''' Widget representing existing cigarshop '''
+
+    def __init__(self, driver, the_path):
+        super(ExistingCigarshopWidget, self).__init__(driver, the_path)
+        self.being_edited_check_xpath = "input[@data-ng-model = 'shop.name']"
+        self.update_button_path = "button[contains(text(), 'Update')]"
+        static_shop_path = self.get_child_path("*[@shop = 'curshop']/div")
+        self.static_shop = StaticCigarshopFieldsWidget(self.driver, static_shop_path)
+
+    def is_being_edited(self):
+        ''' check to see if the text input is visible and the shop is being edited '''
+        return self.is_visible(self.get_child_path(self.being_edited_check_xpath))
+
+    def get_name(self):
+        ''' get the shop name '''
+        if not self.is_being_edited():
+            return self.static_shop.fill().get_name()
+        raise ValueError("This part is not ready yet")
+
+    def get_lat(self):
+        ''' get the shop latitude '''
+        if not self.is_being_edited():
+            return self.static_shop.fill().get_lat()
+        raise ValueError("This part is not ready yet")
+
+    def get_long(self):
+        ''' get the shop longitude '''
+        if not self.is_being_edited():
+            return self.static_shop.fill().get_long()
+        raise ValueError("This part is not ready yet")
