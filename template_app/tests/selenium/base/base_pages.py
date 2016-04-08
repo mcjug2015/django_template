@@ -1,7 +1,7 @@
 ''' module for classes that wrap a single browser page '''
 from template_app.tests.selenium.base.base_selenium import BaseSeleniumObject
-from template_app.tests.selenium.base.base_elements import LoginElement, BaseTextElement,\
-    NewCigarshopWidget, ExistingCigarshopWidget
+from template_app.tests.selenium.base.base_elements import (LoginElement, BaseTextElement,
+                                                            NewCigarshopWidget, ExistingCigarshopWidget)
 
 
 class BasePage(BaseSeleniumObject):
@@ -41,20 +41,27 @@ class WelcomePage(BasePage):
         self.login_disclaimer = BaseTextElement(self.driver, "//div/div[contains(text(), 'You must login')]")
         self.initial_elements += [self.login_element, self.login_disclaimer]
         self.new_cigarshop_widget = NewCigarshopWidget(self.driver)
-        self.name_to_existing_shop = {}
 
     def login_good(self, username, password):
         ''' succesfully login and fill out widgets that become visible afterwards '''
         self.login_element.login_good(username, password)
         self.new_cigarshop_widget.fill()
 
+    def get_existing_shop_obj(self, the_name):
+        ''' get the object that represents the shop with the provided name '''
+        all_shops_path = "//div[contains(@data-ng-repeat, '(id, curshop) in shops') and *[@shop = 'curshop']]"
+        all_shop_elements = self.driver.find_elements_by_xpath(all_shops_path)
+        for idx in range(len(all_shop_elements)):
+            the_path = "%s[%s]/*[@shop = 'curshop']" % (all_shops_path, idx + 1)
+            existing_cigarshop = ExistingCigarshopWidget(self.driver, the_path).fill()
+            if existing_cigarshop.get_name() == the_name:
+                return existing_cigarshop
+        return None
+
     def create_shop(self, name, the_lat, the_long):
         ''' create a new cigarshop '''
         self.new_cigarshop_widget.create_cigar_shop(name, the_lat, the_long)
-        inner_cigarshop_path = "*[@shop = 'curshop']/div/div[@data-ng-bind = 'shop.name' and contains(text(), '%s')]"
-        inner_cigarshop_path = inner_cigarshop_path % name
-        existing_cigarshop_path = "//div[contains(@data-ng-repeat, '(id, curshop) in shops') and %s]"
-        existing_cigarshop_path = existing_cigarshop_path % inner_cigarshop_path
-        existing_cigarshop = ExistingCigarshopWidget(self.driver, existing_cigarshop_path)
-        existing_cigarshop.fill()
-        self.name_to_existing_shop[name] = existing_cigarshop
+
+    def update_shop(self, old_name, new_name, new_lat, new_long):
+        ''' update shop and the map '''
+        self.get_existing_shop_obj(old_name).update(new_name, new_lat, new_long)

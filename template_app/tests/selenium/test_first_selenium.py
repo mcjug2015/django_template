@@ -18,11 +18,22 @@ class FirstTest(BaseUserSeleniumTest):
                                  "39.999111", "-77.333444")
         welcome_page.create_shop("Another Selenium created shop",
                                  "38.888888", "-79.111222")
-        shop1 = welcome_page.name_to_existing_shop["Selenium created shop"]
-        shop2 = welcome_page.name_to_existing_shop["Another Selenium created shop"]
+        shop1 = welcome_page.get_existing_shop_obj("Selenium created shop")
+        shop2 = welcome_page.get_existing_shop_obj("Another Selenium created shop")
         self.assertEquals(shop1.get_name(), "Selenium created shop")
         self.assertEquals(shop1.get_lat(), "39.999111")
         self.assertEquals(shop1.get_long(), "-77.333444")
+        self.assertEquals(shop2.get_name(), "Another Selenium created shop")
+        self.assertEquals(shop2.get_lat(), "38.888888")
+        self.assertEquals(shop2.get_long(), "-79.111222")
+
+        welcome_page.update_shop("Selenium created shop", "OMNOMNOM", "36.999111", "-79.333444")
+        self.assertIsNone(welcome_page.get_existing_shop_obj("Selenium created shop"))
+        shop1 = welcome_page.get_existing_shop_obj("OMNOMNOM")
+        shop2 = welcome_page.get_existing_shop_obj("Another Selenium created shop")
+        self.assertEquals(shop1.get_name(), "OMNOMNOM")
+        self.assertEquals(shop1.get_lat(), "36.999111")
+        self.assertEquals(shop1.get_long(), "-79.333444")
         self.assertEquals(shop2.get_name(), "Another Selenium created shop")
         self.assertEquals(shop2.get_lat(), "38.888888")
         self.assertEquals(shop2.get_long(), "-79.111222")

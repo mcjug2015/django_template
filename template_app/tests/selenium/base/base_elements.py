@@ -163,14 +163,32 @@ class ExistingCigarshopWidget(BaseElement):
 
     def __init__(self, driver, the_path):
         super(ExistingCigarshopWidget, self).__init__(driver, the_path)
-        self.being_edited_check_xpath = "input[@data-ng-model = 'shop.name']"
+        self.being_edited_check_xpath = self.get_child_path("input[@data-ng-model = 'shop.name']")
         self.update_button_path = "button[contains(text(), 'Update')]"
-        static_shop_path = self.get_child_path("*[@shop = 'curshop']/div")
+        self.save_update_button_path = "button[contains(text(), 'Save Update')]"
+        static_shop_path = self.get_child_path("div")
         self.static_shop = StaticCigarshopFieldsWidget(self.driver, static_shop_path)
+        self.editing_shop = EditInProgressCigarshopFieldsWidget(self.driver, static_shop_path)
 
     def is_being_edited(self):
         ''' check to see if the text input is visible and the shop is being edited '''
-        return self.is_visible(self.get_child_path(self.being_edited_check_xpath))
+        return self.is_visible(self.being_edited_check_xpath)
+
+    def begin_update(self):
+        ''' click update button if not already editing '''
+        if not self.is_being_edited():
+            the_wait = EC.visibility_of_element_located((By.XPATH,
+                                                         self.being_edited_check_xpath))
+            self.get_child_element(self.update_button_path, "click").fill().click_and_wait(the_wait)
+
+    def update(self, new_name, new_lat, new_long):
+        ''' update the cigarshop '''
+        self.begin_update()
+        self.editing_shop.fill()
+        self.editing_shop.send_input(new_name, new_lat, new_long)
+        the_wait = EC.invisibility_of_element_located((By.XPATH, self.being_edited_check_xpath))
+        self.get_child_element(self.save_update_button_path,
+                               "click").fill().click_and_wait(the_wait)
 
     def get_name(self):
         ''' get the shop name '''
