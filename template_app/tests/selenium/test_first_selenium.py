@@ -27,7 +27,9 @@ class FirstTest(BaseUserSeleniumTest):
         self.assertEquals(shop2.get_lat(), "38.888888")
         self.assertEquals(shop2.get_long(), "-79.111222")
 
-        welcome_page.update_shop("Selenium created shop", "OMNOMNOM", "36.999111", "-79.333444")
+        welcome_page.update_save("Selenium created shop", "OMNOMNOM", "36.999111", "-79.333444")
+        welcome_page.update_cancel("Another Selenium created shop", "ZZZZZZZ",
+                                   "36.555000", "-79.8675309")
         self.assertIsNone(welcome_page.get_existing_shop_obj("Selenium created shop"))
         shop1 = welcome_page.get_existing_shop_obj("OMNOMNOM")
         shop2 = welcome_page.get_existing_shop_obj("Another Selenium created shop")

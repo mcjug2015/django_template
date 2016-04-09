@@ -10,6 +10,7 @@ describe("tests for the cigar shops directives", function() {
     var saveAndGetSpy;
     var getServerShopSpy;
     var getClientShopSpy;
+    var copyClientShopSpy;
     var returnedCigarShops;
 
     beforeEach(module("template_app"));
@@ -26,6 +27,9 @@ describe("tests for the cigar shops directives", function() {
         
         getClientShopSpy = jasmine.createSpy('getClientShop');
         $provide.value("getClientShop", getClientShopSpy);
+        
+        copyClientShopSpy = jasmine.createSpy('copyClientShop');
+        $provide.value("copyClientShop", copyClientShopSpy);
     }));
     
     beforeEach(inject(function(_$rootScope_, _$compile_, _$q_) {
@@ -93,6 +97,7 @@ describe("tests for the cigar shops directives", function() {
             expect(elm.find('div div input').last().val()).toEqual('6.8');
             expect(elm.find('div button').first().text()).toEqual('Save Update');
             expect(elm.find('div button').last().text()).toEqual('Cancel Update');
+            expect(copyClientShopSpy).toHaveBeenCalled();
         });
         
         it("hides editable fields when cancelEdits is called", function() {
@@ -113,6 +118,7 @@ describe("tests for the cigar shops directives", function() {
             expect(elm.find('div button').text()).toEqual('Update');
             expect(dirScope.shop).toBeDefined();
             expect(dirScope.shop.name).toEqual('Test shop');
+            expect(copyClientShopSpy).toHaveBeenCalled();
         });
         
         it("invokes update and stops editing when saveEdits is called", function() {
@@ -134,6 +140,7 @@ describe("tests for the cigar shops directives", function() {
             expect(elm.find('div div div').first().text()).toEqual('1.110000');
             expect(elm.find('div div div').last().text()).toEqual('7.770000');
             expect(elm.find('div button').text()).toEqual('Update');
+            expect(copyClientShopSpy).not.toHaveBeenCalled();
         });
     });
     

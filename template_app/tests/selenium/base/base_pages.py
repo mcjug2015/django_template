@@ -62,6 +62,10 @@ class WelcomePage(BasePage):
         ''' create a new cigarshop '''
         self.new_cigarshop_widget.create_cigar_shop(name, the_lat, the_long)
 
-    def update_shop(self, old_name, new_name, new_lat, new_long):
-        ''' update shop and the map '''
-        self.get_existing_shop_obj(old_name).update(new_name, new_lat, new_long)
+    def update_save(self, old_name, new_name, new_lat, new_long):
+        ''' update shop and save '''
+        self.get_existing_shop_obj(old_name).update_save(new_name, new_lat, new_long)
+
+    def update_cancel(self, old_name, new_name, new_lat, new_long):
+        ''' update shop and cancel '''
+        self.get_existing_shop_obj(old_name).update_cancel(new_name, new_lat, new_long)

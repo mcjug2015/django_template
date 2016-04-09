@@ -1,5 +1,7 @@
 angular.module('template_app').directive('dtCigarShop', ['CigarShop', 'getServerShop',
-                                                         function(CigarShop, getServerShop) {
+                                                         'copyClientShop',
+                                                         function(CigarShop, getServerShop,
+                                                                  copyClientShop) {
     "use strict";
     return {
         restrict: 'E',
@@ -10,9 +12,12 @@ angular.module('template_app').directive('dtCigarShop', ['CigarShop', 'getServer
         link: function (scope, element, attrs) {
             scope.startEditing = function() {
                 scope.shop.beingEdited = true;
+                scope.initial_shop = {};
+                copyClientShop(scope.initial_shop, scope.shop);
             };
             
             scope.cancelEdits = function() {
+                copyClientShop(scope.shop, scope.initial_shop);
                 scope.shop.beingEdited = false;
             };
             

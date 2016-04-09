@@ -53,4 +53,39 @@ describe("Tests for the cigarshop services", function() {
                                     'owner': 'c'});
         });
     });
+
+
+    describe("tests for the copyClientShop Service", function() {
+        var copyClientShopService;
+        
+        beforeEach(inject(function(_$rootScope_, copyClientShop) {
+            $rootScope = _$rootScope_;
+            copyClientShopService = copyClientShop;
+        }));
+        
+        it("converts a client format shop into a server format shop", function() {
+            var toShop = {'name': 'a',
+                          'id': 'b',
+                          'owner': 'c',
+                          'resource_uri': 'd',
+                          'location': {'lat': 1, 'long': 2},
+                          'beingEdited': 'e',
+                          'editable': 'f'};
+            var fromShop = {'name': 'a1',
+                            'id': 'b1',
+                            'owner': 'c1',
+                            'resource_uri': 'd1',
+                            'location': {'lat': 99, 'long': 100},
+                            'beingEdited': 'e1',
+                            'editable': 'f1'};
+            retval = copyClientShopService(toShop, fromShop);
+            expect(toShop).toEqual({'name': 'a1',
+                                    'id': 'b1',
+                                    'owner': 'c1',
+                                    'resource_uri': 'd1',
+                                    'location': {'lat': 99, 'long': 100},
+                                    'beingEdited': 'e1',
+                                    'editable': 'f1'});
+        });
+    });
 });

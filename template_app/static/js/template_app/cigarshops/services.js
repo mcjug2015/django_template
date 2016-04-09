@@ -15,6 +15,23 @@ angular.module('template_app').factory('getClientShop', [function() {
 }]);
 
 
+angular.module('template_app').factory('copyClientShop', [function() {
+    "use strict";
+    var copyClientShopInstance = function(toShop, fromShop) {
+        toShop.name = fromShop.name;
+        toShop.location = {};
+        toShop.location.lat = fromShop.location.lat;
+        toShop.location.long = fromShop.location.long;
+        toShop.id = fromShop.id;
+        toShop.resource_uri = fromShop.resource_uri;
+        toShop.owner = fromShop.owner;
+        toShop.beingEdited = fromShop.beingEdited;
+        toShop.editable = fromShop.editable;
+    };
+    return copyClientShopInstance;
+}]);
+
+
 angular.module('template_app').factory('getServerShop', [function() {
     "use strict";
     var getServerShopInstance = function(clientShop) {
