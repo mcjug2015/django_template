@@ -165,9 +165,10 @@ class ExistingCigarshopWidget(BaseElement):
         super(ExistingCigarshopWidget, self).__init__(driver, the_path)
         self.being_edited_check_xpath = self.get_child_path("input[@data-ng-model = 'shop.name']")
         self.update_button_path = "button[contains(text(), 'Update')]"
+        self.delete_button_path = "button[contains(text(), 'Delete')]"
         self.save_update_button_path = "button[contains(text(), 'Save Update')]"
         self.cancel_update_button_path = "button[contains(text(), 'Cancel Update')]"
-        static_shop_path = self.get_child_path("div")
+        static_shop_path = self.get_child_path("*[@shop = 'curshop']/div")
         self.static_shop = StaticCigarshopFieldsWidget(self.driver, static_shop_path)
         self.editing_shop = EditInProgressCigarshopFieldsWidget(self.driver, static_shop_path)
 
@@ -201,6 +202,10 @@ class ExistingCigarshopWidget(BaseElement):
         the_wait = EC.invisibility_of_element_located((By.XPATH, self.being_edited_check_xpath))
         self.get_child_element(self.cancel_update_button_path,
                                "click").fill().click_and_wait(the_wait)
+
+    def delete(self):
+        ''' delete the shop represented by this object, does not wait, caller needs to. '''
+        self.get_child_element(self.delete_button_path, "click").fill().click()
 
     def get_name(self):
         ''' get the shop name '''

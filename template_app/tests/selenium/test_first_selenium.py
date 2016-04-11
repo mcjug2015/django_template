@@ -14,10 +14,13 @@ class FirstTest(BaseUserSeleniumTest):
                           "You must login to use this site")
         welcome_page.login_good(self.the_user['username'],
                                 self.the_user['password'])
+        self.assertEquals(0, welcome_page.get_num_shops())
         welcome_page.create_shop("Selenium created shop",
                                  "39.999111", "-77.333444")
+        self.assertEquals(1, welcome_page.get_num_shops())
         welcome_page.create_shop("Another Selenium created shop",
                                  "38.888888", "-79.111222")
+        self.assertEquals(2, welcome_page.get_num_shops())
         shop1 = welcome_page.get_existing_shop_obj("Selenium created shop")
         shop2 = welcome_page.get_existing_shop_obj("Another Selenium created shop")
         self.assertEquals(shop1.get_name(), "Selenium created shop")
@@ -39,3 +42,9 @@ class FirstTest(BaseUserSeleniumTest):
         self.assertEquals(shop2.get_name(), "Another Selenium created shop")
         self.assertEquals(shop2.get_lat(), "38.888888")
         self.assertEquals(shop2.get_long(), "-79.111222")
+        self.assertEquals(2, welcome_page.get_num_shops())
+
+        welcome_page.delete_shop("OMNOMNOM")
+        self.assertEquals(1, welcome_page.get_num_shops())
+        welcome_page.delete_shop("Another Selenium created shop")
+        self.assertEquals(0, welcome_page.get_num_shops())
