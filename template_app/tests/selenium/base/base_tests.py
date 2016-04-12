@@ -44,6 +44,7 @@ class BaseUserSeleniumTest(BaseSeleniumTest):
         ''' ask the server to create a user, return dict with username, password '''
         the_url = cls.get_full_url('/selenium/create_user/?username=%s' % username)
         response = requests.get(the_url)
+        response.raise_for_status()
         return response.json()
 
     @classmethod

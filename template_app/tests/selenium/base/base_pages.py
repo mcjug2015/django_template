@@ -1,4 +1,5 @@
 ''' module for classes that wrap a single browser page '''
+# pylint: disable=E1101
 from selenium.webdriver.support.wait import WebDriverWait
 from template_app.tests.selenium.base.base_selenium import BaseSeleniumObject,\
     ElementCountEqualWait
