@@ -1,4 +1,5 @@
 ''' module for base selenium objects '''
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 class ElementCountEqualWait(object):
@@ -13,8 +14,12 @@ class ElementCountEqualWait(object):
         num_elements = 0
         the_elements = driver.find_elements_by_xpath(self.the_path)
         for element in the_elements:
-            if element.is_displayed():
-                num_elements += 1
+            try:
+                if element.is_displayed():
+                    num_elements += 1
+            except StaleElementReferenceException:
+                # noop, happens when element isn't in the dom anymore
+                pass
         if num_elements == self.expected_count:
             return True
         return False

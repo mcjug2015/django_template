@@ -3,6 +3,7 @@
 import os
 import string
 import random
+import json
 import requests
 from django.test.testcases import TestCase
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
@@ -50,11 +51,36 @@ class BaseUserSeleniumTest(BaseSeleniumTest):
     @classmethod
     def remove_user(cls, username):
         ''' ask the server to remove user by username '''
-        requests.get(cls.get_full_url('/selenium/remove_user/?username=%s' % username))
+        response = requests.get(cls.get_full_url('/selenium/remove_user/?username=%s' % username))
+        response.raise_for_status()
+
+    def fill_csrf_cookies(self):
+        ''' get a csrf token for posts and such '''
+        if not self.csrf_cookies:
+            client = requests.session()
+            response = client.get(self.get_full_url('/welcome/'))
+            response.raise_for_status()
+            self.csrf_cookies = dict(client.cookies)
+
+    def create_cigarshop(self, name, the_lat, the_long):
+        ''' create a cigarshop owned by the user this test created while setting up '''
+        self.fill_csrf_cookies()
+        json_obj = {'name': name,
+                    'lat': the_lat,
+                    'long': the_long,
+                    'username': self.the_user['username']}
+        the_headers = {'Content-type': 'application/json',
+                       "X-CSRFToken": self.csrf_cookies['csrftoken']}
+        response = requests.post(self.get_full_url('/selenium/create_shop/'),
+                                 data=json.dumps(json_obj),
+                                 headers=the_headers,
+                                 cookies=self.csrf_cookies)
+        response.raise_for_status()
 
     def setUp(self):
         ''' set up the test '''
         super(BaseUserSeleniumTest, self).setUp()
+        self.csrf_cookies = None
         self.username = 'selenium_user_%s' % self.id_generator()
         self.the_user = self.create_user(self.username)
 

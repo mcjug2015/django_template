@@ -31,19 +31,20 @@ class WelcomePageTest(BaseUserSeleniumTest):
 
     def test_fresh_cigarshops(self):
         ''' make sure that newly created cigarshops can be updated and deleted '''
+        self.create_cigarshop("Existing Shop", "35.555551", "-75.555551")
         welcome_page = WelcomePage(self.driver)
         welcome_page.navigate_and_load()
         self.assertEquals(welcome_page.login_disclaimer.get_text(),
                           "You must login to use this site")
         welcome_page.login_good(self.the_user['username'],
                                 self.the_user['password'])
-        self.assertEquals(0, welcome_page.get_num_shops())
+        self.assertEquals(1, welcome_page.get_num_shops())
         welcome_page.create_shop("Selenium created shop",
                                  "39.999111", "-77.333444")
-        self.assertEquals(1, welcome_page.get_num_shops())
+        self.assertEquals(2, welcome_page.get_num_shops())
         welcome_page.create_shop("Another Selenium created shop",
                                  "38.888888", "-79.111222")
-        self.assertEquals(2, welcome_page.get_num_shops())
+        self.assertEquals(3, welcome_page.get_num_shops())
 
         self.verify_update_cancel_delete(welcome_page, {'initial_name': 'Selenium created shop',
                                                         'initial_lat': '39.999111',
@@ -54,7 +55,7 @@ class WelcomePageTest(BaseUserSeleniumTest):
                                                         'cancel_name': 'a',
                                                         'cancel_lat': 'b',
                                                         'cancel_long': 'c'})
-        self.assertEquals(1, welcome_page.get_num_shops())
+        self.assertEquals(2, welcome_page.get_num_shops())
         self.verify_update_cancel_delete(welcome_page, {'initial_name': 'Another Selenium created shop',
                                                         'initial_lat': '38.888888',
                                                         'initial_long': '-79.111222',
@@ -64,4 +65,14 @@ class WelcomePageTest(BaseUserSeleniumTest):
                                                         'cancel_name': 'x',
                                                         'cancel_lat': 'y',
                                                         'cancel_long': 'z'})
+        self.assertEquals(1, welcome_page.get_num_shops())
+        self.verify_update_cancel_delete(welcome_page, {'initial_name': 'Existing Shop',
+                                                        'initial_lat': '35.555551',
+                                                        'initial_long': '-75.555551',
+                                                        'new_name': 'Last shop standing',
+                                                        'new_lat': '35.555552',
+                                                        'new_long': '-75.555552',
+                                                        'cancel_name': 'ax',
+                                                        'cancel_lat': 'by',
+                                                        'cancel_long': 'cz'})
         self.assertEquals(0, welcome_page.get_num_shops())
