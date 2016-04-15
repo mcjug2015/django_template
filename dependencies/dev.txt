@@ -2,7 +2,7 @@ django-nose==1.4.3
 pep8==1.6.2
 pylint==1.5.1
 nose-exclude==0.4.1
-mockito==0.5.2
+mockito-without-hardcoded-distribute-version==0.5.4
 coverage==4.0.3
 selenium==2.53.1
 requests==2.9.1

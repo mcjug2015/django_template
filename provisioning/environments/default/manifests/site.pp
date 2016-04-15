@@ -96,7 +96,7 @@ class create_dirs {
         require => [User[$project_username], Group[$project_common_groupname]]
     }
     
-    $other_dirs = [$project_path_code, $logs_path]
+    $other_dirs = [$project_path_code, $logs_path, "/home/$project_username/ssl"]
     file { $other_dirs:
         ensure  => 'directory',
         owner   => $project_username,
@@ -237,6 +237,22 @@ class setup_db {
     }
 }
 include setup_db
+
+
+openssl::certificate::x509 { "self_signed_cert":
+    ensure       => present,
+    country      => "US",
+    organization => "MCJUG2015",
+    commonname   => "localhost",
+    state        => "MD",
+    locality     => "montgomery county",
+    days         => 3456,
+    base_dir     => "/home/$project_username/ssl",
+    owner        => $project_username,
+    group        => "nginx",
+    force        => false,
+    require      => [File["/home/$project_username/ssl"]],
+}
 
 
 class { "selinux":
