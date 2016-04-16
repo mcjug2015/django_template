@@ -124,18 +124,18 @@ class install_lib_deps {
         ensure   => latest,
     }
 
-	$secondary_libs = ["uwsgi", "uwsgi-plugin-python", "xorg-x11-server-Xvfb", "firefox.x86_64"]
-	package { $secondary_libs:
+    $secondary_libs = ["uwsgi", "uwsgi-plugin-python", "xorg-x11-server-Xvfb", "firefox.x86_64"]
+    package { $secondary_libs:
         ensure   => latest,
         require  => [Package["epel-release"]]
     }
     
     package { "rubygems":
-        ensure => latest,
+        ensure => installed,
     }
     
     package { "inifile":
-        ensure   => "latest",
+        ensure   => installed,
         provider => "gem",
         require  => Package["rubygems"],
     }
