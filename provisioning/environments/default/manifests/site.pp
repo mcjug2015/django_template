@@ -129,6 +129,16 @@ class install_lib_deps {
         ensure   => latest,
         require  => [Package["epel-release"]]
     }
+    
+    package { "rubygems":
+        ensure => latest,
+    }
+    
+    package { "inifile":
+        ensure   => "latest",
+        provider => "gem",
+        require  => Package["rubygems"],
+    }
 }
 include install_lib_deps
 
@@ -239,7 +249,7 @@ class setup_db {
 include setup_db
 
 
-openssl::certificate::x509 { "self_signed_cert":
+openssl::certificate::x509 { "the_cert":
     ensure       => present,
     country      => "US",
     organization => "MCJUG2015",
@@ -251,7 +261,7 @@ openssl::certificate::x509 { "self_signed_cert":
     owner        => $project_username,
     group        => "nginx",
     force        => false,
-    require      => [File["/home/$project_username/ssl"]],
+    require      => [File["/home/$project_username/ssl"], Package["inifile"]],
 }
 
 
