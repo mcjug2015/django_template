@@ -149,6 +149,7 @@ def update_static_files():
     local('cp -r template_app/static/js /opt/django_template/static/')
     local('cp -r template_app/static/html /opt/django_template/static/')
     local('cp -r /opt/django_template/venv/lib/python2.7/site-packages/django/contrib/admin/static/admin /opt/django_template/static/')
+    local('cp -r /opt/django_template/venv/lib/python2.7/site-packages/django/contrib/gis/static/gis /opt/django_template/static/')
 
 
 def refresh_local():

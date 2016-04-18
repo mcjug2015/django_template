@@ -1,4 +1,4 @@
-Django==1.9.1
+Django==1.9.5
 Fabric==1.10.2
 psycopg2==2.6.1
-django-tastypie==0.13.0
+django-tastypie==0.13.3

@@ -31,7 +31,7 @@ class CigarShopResource(ModelResource):
     ''' tastypie resource for cigarshop '''
     owner = fields.ToOneField(UserResource, 'owner')
 
-    def build_filters(self, filters=None):
+    def build_filters(self, filters=None, ignore_bad_filters=False):
         if filters is None:
             filters = {}
         orm_filters = super(CigarShopResource, self).build_filters(filters)
