@@ -271,6 +271,33 @@ class { "selinux":
 }
 
 
+class key_and_cert {
+
+    exec {"create private key":
+        command => "bash -c \"openssl genrsa -out the_cert.key 2048\"",
+        group   => $project_common_groupname,
+        user    => $project_username,
+        require => [File["/home/$project_username/ssl"]],
+        unless  => "bash -c \"test -d /home/$project_username/ssl/the_cert.key\"",
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => "/home/$project_username/ssl/",
+        creates => "/home/$project_username/ssl/the_cert.key",
+    }
+
+    exec {"create self signed cert":
+        command => "bash -c \"openssl req -config /opt/django_template/code/conf/the_cert.cnf -new -x509 -days 4536 -key /home/$project_username/ssl/the_cert.key -out the_cert.crt\"",
+        group   => $project_common_groupname,
+        user    => $project_username,
+        require => [File["/home/$project_username/ssl"], Exec["create private key"]],
+        unless  => "bash -c \"test -d /home/$project_username/ssl/the_cert.crt\"",
+        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
+        cwd     => "/home/$project_username/ssl/",
+        creates => "/home/$project_username/ssl/the_cert.crt",
+    }
+}
+include key_and_cert
+
+
 class final_setup {
     
     exec {"install node":
@@ -307,7 +334,7 @@ class final_setup {
         command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant sudo_refresh_local\"",
         group   => $project_common_groupname,
         user    => $project_sudo_username,
-        require => [Exec["do refresh"], ],
+        require => [Exec["do refresh"], Exec["create self signed cert"], ],
         path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
         cwd     => $project_path_code,
     }

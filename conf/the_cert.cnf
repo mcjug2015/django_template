@@ -1,0 +1,23 @@
+# file managed by puppet
+#
+# SSLeay example configuration file.
+#
+
+# This definition stops the following lines choking if HOME isn't
+# defined.
+HOME                    = .
+RANDFILE                = $ENV::HOME/.rnd
+
+[ req ]
+default_bits            = 2048
+default_md              = sha256
+default_keyfile         = privkey.pem
+distinguished_name      = req_distinguished_name
+prompt                  = no
+
+[ req_distinguished_name ]
+countryName                     = US
+stateOrProvinceName             = MD
+localityName                    = montgomery county
+organizationName                = MCJUG2015
+commonName                      = localhost
