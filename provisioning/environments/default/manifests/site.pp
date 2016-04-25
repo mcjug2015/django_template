@@ -249,22 +249,6 @@ class setup_db {
 include setup_db
 
 
-openssl::certificate::x509 { "the_cert":
-    ensure       => present,
-    country      => "US",
-    organization => "MCJUG2015",
-    commonname   => "localhost",
-    state        => "MD",
-    locality     => "montgomery county",
-    days         => 3456,
-    base_dir     => "/home/$project_username/ssl",
-    owner        => $project_username,
-    group        => "nginx",
-    force        => false,
-    require      => [File["/home/$project_username/ssl"], Package["inifile"]],
-}
-
-
 class { "selinux":
     mode => "permissive",
     type => "targeted",
@@ -285,7 +269,7 @@ class key_and_cert {
     }
 
     exec {"create self signed cert":
-        command => "bash -c \"openssl req -config /opt/django_template/code/conf/the_cert.cnf -new -x509 -days 4536 -key /home/$project_username/ssl/the_cert.key -out the_cert.crt\"",
+        command => "bash -c \"openssl req -config $project_path_code/conf/the_cert.cnf -new -x509 -days 4536 -key /home/$project_username/ssl/the_cert.key -out the_cert.crt\"",
         group   => $project_common_groupname,
         user    => $project_username,
         require => [File["/home/$project_username/ssl"], Exec["create private key"]],
