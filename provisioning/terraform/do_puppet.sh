@@ -12,3 +12,5 @@
 /usr/bin/puppet module install jfryman-nginx
 /usr/bin/puppet module install saz-sudo
 /usr/bin/puppet module install jfryman-selinux
+
+/usr/bin/puppet apply /tmp/django_template/provisioning/vagrant/environments/default/manifests/site.pp
