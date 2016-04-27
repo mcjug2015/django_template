@@ -119,7 +119,7 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "wget", "epel-release", "openssl"]
+    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "wget", "epel-release", "openssl-devel"]
     package { $project_libs:
         ensure   => latest,
     }
@@ -251,7 +251,7 @@ class key_and_cert {
         command => "bash -c \"openssl genrsa -out the_cert.key 2048\"",
         group   => $project_common_groupname,
         user    => $project_username,
-        require => [File["/home/$project_username/ssl"], Package["openssl"]],
+        require => [File["/home/$project_username/ssl"], Package["openssl-devel"]],
         unless  => "bash -c \"test -d /home/$project_username/ssl/the_cert.key\"",
         path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
         cwd     => "/home/$project_username/ssl/",
