@@ -119,7 +119,8 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "wget", "epel-release", "openssl"]
+    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "wget", "epel-release", "openssl",
+                     "bzip2"]
     package { $project_libs:
         ensure   => latest,
     }
