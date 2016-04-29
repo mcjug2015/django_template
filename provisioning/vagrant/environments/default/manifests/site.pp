@@ -31,8 +31,12 @@ class { 'sudo':
 
 
 class privileges {
+    sudo::conf { 'admins-requiretty':
+        priority => 5,
+        content => 'Defaults:%admins !requiretty',
+    }
     sudo::conf { 'admins':
-      content => '%admins ALL=(ALL) NOPASSWD: ALL',
+        content => '%admins ALL=(ALL) NOPASSWD: ALL',
     }
 }
 include privileges
