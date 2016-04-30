@@ -11,7 +11,9 @@ resource "aws_instance" "dt_web" {
     security_groups = ["comcast_from_house"]
     key_name = "victors_keypair"
     instance_initiated_shutdown_behavior = "terminate"
-    root_block_device.delete_on_termination = true
+    root_block_device {
+        delete_on_termination = true
+    }
     tags {
         Name = "Django Template Server"
     }
