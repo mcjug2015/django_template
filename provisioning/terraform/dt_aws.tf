@@ -17,4 +17,5 @@ resource "aws_instance" "dt_web" {
     tags {
         Name = "Django Template Server"
     }
+    user_data = "${file("./cloud_init.txt")}"
 }

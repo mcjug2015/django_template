@@ -1,0 +1,8 @@
+#cloud-config
+
+packages:
+ - git
+
+runcmd:
+ - [git, clone, "https://github.com/mcjug2015/django_template.git", "/tmp/django_template/"]
+ - [sh, "/tmp/django_template/provisioning/terraform/do_puppet.sh"]
