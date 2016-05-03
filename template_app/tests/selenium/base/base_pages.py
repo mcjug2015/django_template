@@ -40,7 +40,7 @@ class WelcomePage(BasePage):
     ''' the welcome page '''
 
     def __init__(self, driver):
-        super(WelcomePage, self).__init__(driver, 'http://127.0.0.1/welcome/')
+        super(WelcomePage, self).__init__(driver, 'https://127.0.0.1/welcome/')
         self.login_element = LoginElement(self.driver)
         self.login_disclaimer = BaseTextElement(self.driver, "//div/div[contains(text(), 'You must login')]")
         self.initial_elements += [self.login_element, self.login_disclaimer]

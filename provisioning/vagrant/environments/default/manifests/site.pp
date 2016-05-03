@@ -124,8 +124,8 @@ include create_dirs
 
 class install_lib_deps {
 
-    $project_libs = ["git", "nano", "gcc-c++", "net-tools", "wget", "epel-release", "openssl",
-                     "bzip2"]
+    $project_libs = ["git", "nano", "net-tools", "wget", "epel-release", "openssl",
+                     "bzip2", "nodejs", "npm"]
     package { $project_libs:
         ensure   => latest,
     }
@@ -280,24 +280,13 @@ include key_and_cert
 
 class final_setup {
     
-    exec {"install node":
-        command => "bash -c \"source $project_venv_path/bin/activate;fab one_time_node_install;\"",
-        group   => $project_common_groupname,
-        user    => $project_username,
-        require => [Package["gcc-c++"], Python::Virtualenv[$project_venv_path],
-                    Vcsrepo[$project_path_code]],
-        unless  => "bash -c \"test -d $project_venv_path/lib/node_modules/npm\"",
-        timeout => 1800,
-        path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
-        cwd     => $project_path_code,
-    }
-    
     exec {"invoke tests":
         command => "bash -c \"source $project_venv_path/bin/activate;fab vagrant_test precommit\"",
         group   => $project_common_groupname,
         user    => $project_username,
         timeout => 600,
-        require => [Exec["install postgis extensions"], Exec["install node"]],
+        require => [Exec["install postgis extensions"], Python::Virtualenv[$project_venv_path],
+                    Vcsrepo[$project_path_code]],
         path    => "/opt/django_template/venv/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/dtuser/.local/bin:/home/dtuser/bin",
         cwd     => $project_path_code,
     }

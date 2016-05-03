@@ -9,17 +9,6 @@ env.prj_name = 'django_template'
 env.path = '/opt/%(prj_name)s' % env
 
 
-def one_time_node_install():
-    ''' installs node into currently sourced virtualenv, no existence checks done. '''
-    _ensure_virtualenv()
-    with lcd('/tmp'):
-        local('curl http://nodejs.org/dist/node-latest.tar.gz | tar xvz')
-        with lcd('node-v*'):
-            local('./configure --prefix=$VIRTUAL_ENV')
-            local('make install')
-    local('rm -rf /tmp/node-v*')
-
-
 def vagrant_selenium():
     env.instance = 'vagrant_selenium'
 
@@ -53,10 +42,12 @@ def install_prod_deps():
     local('pip install -q -r dependencies/prod.txt' % env)
 
 
-def install_all_deps():
+def install_dev_deps():
     _ensure_virtualenv()
-    install_prod_deps()
     local('pip install -q -r dependencies/dev.txt' % env)
+
+
+def install_npm_deps():
     with lcd('template_app/front_end_qc'):
         local('npm install')
 
@@ -83,6 +74,7 @@ def run_tests():
 def run_selenium_tests():
     _ensure_virtualenv()
     require('instance')
+    install_dev_deps()
     local('cp django_template/environments/%(instance)s/settings/%(instance)s_code.py django_template/settings.py' % env)
     local('python manage.py test --noinput --keepdb template_app.tests.selenium')
 
@@ -126,7 +118,9 @@ def copy_to_served():
 def precommit():
     require('instance')
     _ensure_virtualenv()
-    install_all_deps()
+    install_prod_deps()
+    install_dev_deps()
+    install_npm_deps()
     local('rm -rf reports')
     local('mkdir -p reports')
     pylint()
@@ -155,7 +149,7 @@ def update_static_files():
 def refresh_local():
     require('instance')
     _ensure_virtualenv()
-    install_all_deps()
+    install_prod_deps()
     copy_settings()
     copy_uwsgi_params()
     local('python manage.py migrate --noinput')
