@@ -10,6 +10,11 @@ variable "secret_key" {
   default = "NOPE"
 }
 
+variable "region_name" {
+  description = "Name of the amazon region"
+  default = "us-east-1"
+}
+
 variable "local_ip" {
   description = "Your local ip for aws security group"
   default = "73.133.230.159/32"
@@ -24,7 +29,7 @@ variable "pem_key_name" {
 provider "aws" {
     access_key = "${var.access_key}"
     secret_key = "${var.secret_key}"
-    region = "us-east-1"
+    region = "${var.region_name}"
 }
 
 resource "aws_security_group" "ssh_and_http" {
