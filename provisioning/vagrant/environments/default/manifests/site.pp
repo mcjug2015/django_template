@@ -125,7 +125,7 @@ include create_dirs
 class install_lib_deps {
 
     $project_libs = ["git", "nano", "net-tools", "wget", "epel-release", "openssl",
-                     "bzip2", "nodejs", "npm"]
+                     "bzip2", "nodejs", "npm", "java-1.8.0-openjdk-devel"]
     package { $project_libs:
         ensure   => latest,
     }

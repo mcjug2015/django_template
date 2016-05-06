@@ -1,4 +1,4 @@
-# Configure the AWS Provider
+# Configure the AWS tf
 
 variable "access_key" {
   description = "Your amazon access key"
