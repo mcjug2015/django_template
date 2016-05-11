@@ -52,6 +52,34 @@ resource "aws_vpc" "dt_vpc" {
     }
 }
 
+resource "aws_internet_gateway" "dt_igw" {
+    vpc_id = "${aws_vpc.dt_vpc.id}"
+
+    tags {
+        Name = "dt_igw"
+    }
+}
+
+resource "aws_route_table" "dt_route_table" {
+    depends_on = ["aws_internet_gateway.dt_igw"]
+    vpc_id = "${aws_vpc.dt_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.dt_igw.id}"
+    }
+
+    tags {
+        Name = "dt_route_table"
+    }
+}
+
+resource "aws_main_route_table_association" "dt_vpc_to_route" {
+    depends_on = ["aws_vpc.dt_vpc", "aws_route_table.dt_route_table"]
+    vpc_id = "${aws_vpc.dt_vpc.id}"
+    route_table_id = "${aws_route_table.dt_route_table.id}"
+}
+
+
 resource "aws_subnet" "dt_subnet" {
     vpc_id = "${aws_vpc.dt_vpc.id}"
     cidr_block = "${var.subnet_cidr}"
@@ -97,6 +125,7 @@ resource "aws_security_group" "ssh_and_http" {
 }
 
 resource "aws_instance" "dt_web" {
+    depends_on = ["aws_internet_gateway.dt_igw"]
     ami = "ami-6d1c2007"
     instance_type = "t2.medium"
     subnet_id = "${aws_subnet.dt_subnet.id}"
