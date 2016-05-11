@@ -10,14 +10,19 @@ variable "secret_key" {
   default = "NOPE"
 }
 
-variable "region_name" {
-  description = "Name of the amazon region"
-  default = "us-east-1"
-}
-
 variable "local_ip" {
   description = "Your local ip for aws security group"
   default = "73.133.230.159/32"
+}
+
+variable "pem_key_name" {
+  description = "Name of the key for your aws .pem file"
+  default = "victors_keypair"
+}
+
+variable "region_name" {
+  description = "Name of the amazon region"
+  default = "us-east-1"
 }
 
 variable "vpc_cidr" {
@@ -28,11 +33,6 @@ variable "vpc_cidr" {
 variable "subnet_cidr" {
   description = "The cidr to use for dt_subnet"
   default = "172.32.0.0/20"
-}
-
-variable "pem_key_name" {
-  description = "Name of the key for your aws .pem file"
-  default = "victors_keypair"
 }
 
 
