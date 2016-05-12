@@ -1,4 +1,3 @@
-# vagrant plugin install vagrant-puppet-install
 # vagrant plugin install vagrant-vbguest
 # vagrant init centos/7;
 # ulimit -n 4048
@@ -18,15 +17,9 @@ Vagrant.configure(2) do |config|
     
     config.puppet_install.puppet_version = :latest
     config.vm.provision :shell do |shell|
-        shell.inline = "mkdir -p /opt/puppetlabs/puppet/modules;
-                        puppet module install stahnma-epel --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install m0byd1ck-repoforge --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install puppetlabs-postgresql --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install stankevich-python --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install puppetlabs-vcsrepo --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install jfryman-nginx --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install saz-sudo --target-dir /opt/puppetlabs/puppet/modules;
-                        puppet module install jfryman-selinux --target-dir /opt/puppetlabs/puppet/modules;"
+        shell.inline = "sudo yum install -y git;
+                        git clone https://github.com/mcjug2015/django_template.git /tmp/django_template/
+                        sudo sh /tmp/django_template/provisioning/do_puppet.sh"
     end
     config.vm.provision "puppet" do |puppet|
         puppet.options = "--verbose --debug"
