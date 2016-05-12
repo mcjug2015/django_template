@@ -8,6 +8,7 @@ Initial creds are admin/admin.
 ```
 git clone https://github.com/mcjug2015/django_template.git
 cd django_template/provisioning/vagrant
+vagrant plugin install vagrant-vbguest
 ulimit -n 4048;vagrant up;
 ```
 host machine http://192.168.50.4/admin/ and http://192.168.50.4/welcome/ can be visited after vagrant up.

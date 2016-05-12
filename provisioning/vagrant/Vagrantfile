@@ -18,13 +18,8 @@ Vagrant.configure(2) do |config|
     config.puppet_install.puppet_version = :latest
     config.vm.provision :shell do |shell|
         shell.inline = "sudo yum install -y git;
-                        git clone https://github.com/mcjug2015/django_template.git /tmp/django_template/
-                        sudo sh /tmp/django_template/provisioning/do_puppet.sh"
-    end
-    config.vm.provision "puppet" do |puppet|
-        puppet.options = "--verbose --debug"
-        puppet.environment_path = "environments"
-        puppet.environment = "default"
+                        git clone https://github.com/mcjug2015/django_template.git /tmp/django_template/;
+                        sudo sh /tmp/django_template/provisioning/do_puppet.sh;"
     end
     
     config.vm.network "private_network", ip: "192.168.50.4"
