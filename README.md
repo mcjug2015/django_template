@@ -46,6 +46,12 @@ terraform show
 As with aws, the last command will show you the ip of the instance that got created, it takes ~15 minutes for the app to be ready, you can go to the /welcome/ and /admin/ pages, and you'll need to add the browser exception for the self signed cert. Ssh username is root
 
 ## Useful bits
+To destroy the aws/digitalocean stuff(and stop being charged $) do:
+```
+terraform destroy
+```
+
+
 If you modified stuff and wanna see it show up, or ran selenium tests or a precommit do
 ```
 ssh to local or remote box as user with sudo bits
