@@ -27,8 +27,23 @@ terraform plan -out the_plan
 terraform apply the_plan
 terraform show
 ```
-The last command will show you the public ip of the aws_instance that got created. The terraform script completes before the cloud init script finishes. ssh and tail /var/log/cloud-init-output.log, or wait ~15 minutes, the app will be up and running. After that you can go to ec2-...com/welcome/ and ec2-...com/admin/; The site forwards to 443 uses a self signed cert so you'll need to add an exception when your browser complains.
+The last command will show you the public ip of the aws_instance that got created. The terraform script completes before the cloud init script finishes. ssh and tail /var/log/cloud-init-output.log, or wait ~15 minutes, the app will be up and running. After that you can go to ec2-...com/welcome/ and ec2-...com/admin/; The site forwards to 443 uses a self signed cert so you'll need to add an exception when your browser complains. Ssh username is centos
 
+### Digital ocean
+```
+git clone https://github.com/mcjug2015/django_template.git
+cd django_template/provisioning/terraform/do
+```
+At this point you'll have to do a couple of things.
+1. Open dt_do.tf and put in your digital ocean token
+2. replace django_template/provisioning/mac_key.pub with your own public key(keep the name the same, or edit the .tf file to reflect the change). You only need to do this if you plan to ssh into the box that gets stood up.
+After that do:
+```
+terraform plan -out the_plan
+terraform apply the_plan
+terraform show
+```
+As with aws, the last command will show you the ip of the instance that got created, it takes ~15 minutes for the app to be ready, you can go to the /welcome/ and /admin/ pages, and you'll need to add the browser exception for the self signed cert. Ssh username is root
 
 ## Useful bits
 If you modified stuff and wanna see it show up, or ran selenium tests or a precommit do
