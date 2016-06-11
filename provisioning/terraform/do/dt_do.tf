@@ -10,8 +10,8 @@ provider "digitalocean" {
 }
 
 # Create a new SSH key
-resource "digitalocean_ssh_key" "vsemenov_mac_key" {
-    name = "Victors mac public key"
+resource "digitalocean_ssh_key" "vsemenov_mac_dt_key" {
+    name = "Victors mac public django template key"
     public_key = "${file("./../mac_key.pub")}"
 }
 
@@ -21,5 +21,5 @@ resource "digitalocean_droplet" "dt_web" {
     region = "nyc3"
     size = "2gb"
     user_data = "${file("./../cloud_init.txt")}"
-    ssh_keys = ["${digitalocean_ssh_key.vsemenov_mac_key.id}"]
+    ssh_keys = ["${digitalocean_ssh_key.vsemenov_mac_dt_key.id}"]
 }
