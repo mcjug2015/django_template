@@ -1,15 +1,5 @@
 # Configure the AWS tf
 
-variable "access_key" {
-  description = "Your amazon access key"
-  default = "NOPE"
-}
-
-variable "secret_key" {
-  description = "Your amazon secret key"
-  default = "NOPE"
-}
-
 variable "local_ip" {
   description = "Your local ip for aws security group"
   default = "73.133.230.159/32"
@@ -37,8 +27,6 @@ variable "subnet_cidr" {
 
 
 provider "aws" {
-    access_key = "${var.access_key}"
-    secret_key = "${var.secret_key}"
     region = "${var.region_name}"
 }
 
