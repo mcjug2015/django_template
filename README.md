@@ -23,6 +23,8 @@ cd django_template/provisioning/terraform/aws
 ```
 At this point you'll need to open up the dt_aws.tf file and put in your keys, local ip address, and aws keypair name. If you change the region you'll need to change the ami in the aws_instance section. We're based off of the official Centos 7 HVM ami. After that do:
 ```
+$ export AWS_ACCESS_KEY_ID="anaccesskey" 
+$ export AWS_SECRET_ACCESS_KEY="asecretkey"
 terraform plan -out the_plan
 terraform apply the_plan
 terraform show
