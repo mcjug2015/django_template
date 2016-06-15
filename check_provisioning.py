@@ -10,9 +10,8 @@ STATE_FILE_PATH = "/var/lib/jenkins/workspace/dt_aws/provisioning/terraform/aws/
 
 def get_url():
     ''' grab the url from terraform show '''
-    state_arg = '"-state=%s"' % STATE_FILE_PATH
     prov_info = subprocess.check_output([TERRAFORM_COMMAND_BASE, "show",
-                                         state_arg])
+                                         STATE_FILE_PATH])
 
     for item in prov_info.split('\n'):
         if item.strip().startswith(GREP_TERM):
