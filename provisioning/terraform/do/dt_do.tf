@@ -1,12 +1,6 @@
 # Configure the DO tf
 
-variable "do_token" {
-  description = "Your DO token"
-  default = "NOPE"
-}
-
 provider "digitalocean" {
-    token = "${var.do_token}"
 }
 
 # Create a new SSH key
