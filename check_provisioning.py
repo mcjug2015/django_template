@@ -58,11 +58,23 @@ class AwsProvisioningChecker(AbstractProvisioningChecker):
         return "public_dns = "
 
 
+class DoProvisioningChecker(AbstractProvisioningChecker):
+    ''' checks aws provisioning '''
+    
+    def get_state_file_path(self):
+        ''' get the tfstate file path '''
+        return "/var/lib/jenkins/workspace/dt_do/provisioning/terraform/do/terraform.tfstate"
+    
+    def get_grep_term(self):
+        ''' get the grep term '''
+        return "ipv4_address = "
+
+
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.provisioning_type == 'aws':
         AwsProvisioningChecker().check_provisioning()
     elif args.provisioning_type == 'do':
-        print "NOT READY YET"
+        DoProvisioningChecker().check_provisioning()
     else:
         raise ValueError("Must provide a valid provisioning type!")
